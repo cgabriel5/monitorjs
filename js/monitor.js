@@ -192,6 +192,143 @@
             // class methods
             "methods__": {
 
+                "getPath": function(path, value) {
+
+                    // cache the object
+                    var _ = this,
+                        object = _.object;
+
+                    // 1) remove start/ending slashes
+                    path = path.replace(/^\.|\.$/g, "");
+
+                    // 2) break apart the path
+                    var parts = path.split(".");
+
+                    // 4) parse each path
+                    for (var i = 0, l = parts.length; i < l; i++) {
+                        // cache the part
+                        var part = parts[i];
+                        // get the prop name and possible array indices
+                        var prop = (part.match(/^[^\[]+/g) || [""])[0],
+                            indices = (part.match(/\d+/g) || []);
+                        // reset the part
+                        parts[i] = [part, prop, indices];
+                    }
+                    // 5) build the path
+                    var old = object,
+                        obj = object;
+                    for (var i = 0, l = parts.length; i < l; i++) {
+                        // cache the part
+                        var part = parts[i];
+                        // get the prop name and possible array indices
+                        var prop = part[1],
+                            indices = part[2];
+
+                        if (!obj[prop] && !obj.hasOwnProperty(prop)) {
+                            return false;
+                        } else {
+                            // reset the ref, as the object was found
+                            old = obj;
+                            obj = obj[prop];
+                        }
+
+                        // check for indices
+                        if (indices.length) {
+                            for (var j = 0, ll = indices.length; j < ll; j++) {
+                                var index = indices[j];
+                                // get the new object
+                                old = obj;
+                                obj = obj[index];
+
+                                if (dtype.isnot(obj, "Object|Array")) {
+                                    return false;
+                                }
+
+                            }
+                        }
+
+                    }
+                    // return the object with the updated/new path
+                    return true;
+                },
+                "setPath": function(path, value) {
+
+                    // cache the object
+                    var _ = this,
+                        object = _.object;
+
+                    // 1) remove start/ending slashes
+                    path = path.replace(/^\.|\.$/g, "");
+
+                    // 2) break apart the path
+                    var parts = path.split(".");
+
+                    // 4) parse each path
+                    for (var i = 0, l = parts.length; i < l; i++) {
+                        // cache the part
+                        var part = parts[i];
+                        // get the prop name and possible array indices
+                        var prop = (part.match(/^[^\[]+/g) || [""])[0],
+                            indices = (part.match(/\d+/g) || []);
+                        // reset the part
+                        parts[i] = [part, prop, indices];
+                    }
+                    // 5) build the path
+                    var old = object,
+                        obj = object;
+                    for (var i = 0, l = parts.length; i < l; i++) {
+                        // cache the part
+                        var part = parts[i];
+                        // get the prop name and possible array indices
+                        var prop = part[1],
+                            indices = part[2];
+
+                        // set the value if the last prop
+                        if (i === (l - 1) && !indices.length) {
+                            // get the last obj ref
+                            obj[prop] = value;
+                        } else {
+
+                            // set the object path
+                            var crumb = (indices.length ? [] : {});
+                            obj[prop] = crumb;
+                            // reset the obj refs
+                            old = obj;
+                            obj = obj[prop];
+
+                        }
+
+                        // check for indices
+                        if (indices.length) {
+
+                            for (var j = 0, ll = indices.length; j < ll; j++) {
+                                var index = indices[j];
+                                if (j === (ll - 1)) { // only run on the last index iteration
+                                    if (i === (l - 1)) { // if the last-last set the final value
+                                        obj[index] = value;
+                                    } else { //
+                                        // more props to loop over
+                                        var crumb = {};
+                                        obj[index] = crumb;
+                                        // reset the obj refs
+                                        old = obj;
+                                        obj = obj[index];
+                                    }
+                                } else {
+                                    // set the object path
+                                    var crumb = [];
+                                    obj[index] = crumb;
+                                    // reset the obj refs
+                                    old = obj;
+                                    obj = obj[index];
+                                }
+                            }
+                        }
+
+                    }
+                    // return the object with the updated/new path
+                    return object;
+                },
                 // trigger methods
                 "set": function() {
 
