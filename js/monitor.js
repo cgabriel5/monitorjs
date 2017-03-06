@@ -162,7 +162,9 @@
                     args = [];
                     var obj = arguments[0];
                     for (var key in obj) {
-                        args.push([key, obj[key]]);
+                        if (obj.hasOwnProperty(key)) {
+                            args.push([key, obj[key]]);
+                        }
                     }
                 }
             }
@@ -183,16 +185,25 @@
                 // returning a new instance of the selector with the new keyword.
                 if (!(this instanceof Library)) return new Library(controller, object);
 
-                // set the controller
+                // set properties
                 this.controller = (controller || undefined);
                 this.object = (object || {});
+                this.cache = {};
 
             },
 
             // class methods
             "methods__": {
 
-                "getPath": function(path, value) {
+                // "getPath", "setPath", "set", "unset", "trigger", "get", "keys", "entries", "hasKey", "keyHasValue", "raw"
+                //
+                // "keys", "entries" => works only for single layer objects
+                //
+                // get => hasKey, keyHasValue
+                // set => unset
+                // trigger
+
+                "get": function(path, value) {
 
                     // cache the object
                     var _ = this,
@@ -210,11 +221,11 @@
                         var part = parts[i];
                         // get the prop name and possible array indices
                         var prop = (part.match(/^[^\[]+/g) || [""])[0],
-                            indices = (part.match(/\d+/g) || []);
+                            indices = (part.match(/\[\d+\]/g) || []);
                         // reset the part
                         parts[i] = [part, prop, indices];
                     }
-                    // 5) build the path
+                    // 5) check the path existence
                     var old = object,
                         obj = object;
                     for (var i = 0, l = parts.length; i < l; i++) {
@@ -235,7 +246,7 @@
                         // check for indices
                         if (indices.length) {
                             for (var j = 0, ll = indices.length; j < ll; j++) {
-                                var index = indices[j];
+                                var index = indices[j].replace(/^\[|\]$/g, "");
                                 // get the new object
                                 old = obj;
                                 obj = obj[index];
@@ -249,13 +260,45 @@
 
                     }
                     // return the object with the updated/new path
-                    return true;
+                    return { val: obj };
                 },
-                "setPath": function(path, value) {
+                "set": function(path, value) {
 
                     // cache the object
                     var _ = this,
-                        object = _.object;
+                        object = _.object,
+                        cache = _.cache,
+                        date = Date.now(),
+                        entry, type = "update";
+
+                    // 1) first check cache for path
+                    entry = cache[path.trim()];
+
+                    // if no cache entry run the get method
+                    // i.e. this path might have been added before
+                    // the library started to monitor the object
+                    if (!entry) {
+                        // the path check
+                        var result = _.get(path);
+                        // the result must be of type object
+                        var check = (dtype.is(result, "Object"));
+                        // get the value of the get check, else default to undefined
+                        // checks are done separately as the value undefined is an
+                        // actual value that the path by result in
+                        var val = (check ? result.val : undefined);
+                        // create the "fake" entry, only needs the value
+                        entry = [, , val];
+                        // determine the type
+                        type = (check ? "update" : "add");
+                    }
+
+                    // determine the old value
+                    var old_value = (entry ? entry[2] : undefined);
+
+                    // update the cache
+                    cache[path] = [date, type, value];
+
+                    // ------------------------------------
 
                     // 1) remove start/ending slashes
                     path = path.replace(/^\.|\.$/g, "");
@@ -269,10 +312,11 @@
                         var part = parts[i];
                         // get the prop name and possible array indices
                         var prop = (part.match(/^[^\[]+/g) || [""])[0],
-                            indices = (part.match(/\d+/g) || []);
+                            indices = (part.match(/\[\d+\]/g) || []);
                         // reset the part
                         parts[i] = [part, prop, indices];
                     }
+
                     // 5) build the path
                     var old = object,
                         obj = object;
@@ -298,11 +342,13 @@
 
                         }
 
+                        // ------------------------------------
+
                         // check for indices
                         if (indices.length) {
 
                             for (var j = 0, ll = indices.length; j < ll; j++) {
-                                var index = indices[j];
+                                var index = indices[j].replace(/^\[|\]$/g, "");
                                 if (j === (ll - 1)) { // only run on the last index iteration
                                     if (i === (l - 1)) { // if the last-last set the final value
                                         obj[index] = value;
@@ -326,176 +372,125 @@
                         }
 
                     }
+
+                    // ------------------------------------
+
+                    // call the callback (controller) if provided
+                    if (_.controller) _.controller.call(_, path, type, value, old_value, Date.now());
+
                     // return the object with the updated/new path
                     return object;
+
                 },
-                // trigger methods
-                "set": function() {
+                "trigger": function(path, value) {
 
                     // cache the object
                     var _ = this,
                         object = _.object,
-                        args = normalize_args.apply(null, arguments);
+                        cache = _.cache,
+                        date = Date.now(),
+                        entry, type = "trigger";
 
-                    // loop through array and set the key::value pairs
-                    for (var i = 0, l = args.length; i < l; i++) {
-                        // cache the current pair
-                        var pair = args[i],
-                            key = pair[0],
-                            value = pair[1];
+                    // 1) first check cache for path
+                    entry = cache[path.trim()];
 
-                        // check whether the key exists
-                        var check = _.hasKey(key);
-
-                        var type = (check ? "update" : "add");
-                        var old_value = (check ? object[key] : undefined);
-
-                        // set the value
-                        object[key] = (value || undefined);
-
-                        // call the callback (controller) if provided
-                        if (this.controller) this.controller.call(_, key, type, value, old_value, Date.now());
+                    // if no cache entry run the get method
+                    // i.e. this path might have been added before
+                    // the library started to monitor the object
+                    if (!entry) {
+                        // the path check
+                        var result = _.get(path);
+                        // the result must be of type object
+                        var check = (dtype.is(result, "Object"));
+                        // get the value of the get check, else default to undefined
+                        // checks are done separately as the value undefined is an
+                        // actual value that the path by result in
+                        var val = (check ? result.val : undefined);
+                        // create the "fake" entry, only needs the value
+                        entry = [, , val];
                     }
 
+                    // determine the old value
+                    var old_value = (entry ? entry[2] : undefined);
+
+                    // update the cache
+                    cache[path] = [date, type, value];
+
+                    // ------------------------------------
+
+                    // call the callback (controller) if provided
+                    if (_.controller) _.controller.call(_, path, type, (value || undefined), old_value, date);
+
                 },
-                "unset": function(property) {
+                "unset": function(path) {
 
                     // cache the object
                     var _ = this,
                         object = _.object,
-                        args = to_array(arguments);
+                        cache = _.cache,
+                        date = Date.now();
 
-                    // loop through array and unset keys
-                    for (var i = 0, l = args.length; i < l; i++) {
-                        // cache the current pair
-                        var key = args[i];
+                    // 1) remove start/ending slashes
+                    path = path.replace(/^\.|\.$/g, "");
 
-                        // check whether the key exists
-                        var check = _.hasKey(key);
+                    // 2) break apart the path
+                    var parts = path.split(".");
 
-                        // if key does not exists skip iteration
-                        if (!check) continue;
-
-                        // var type = (check ? "update" : "add");
-                        var old_value = (check ? object[key] : undefined);
-
-                        // unset the value
-                        delete object[key];
-
-                        // call the callback (controller) if provided
-                        if (this.controller) this.controller.call(_, key, "delete", undefined, old_value, Date.now());
+                    // 4) parse each path
+                    for (var i = 0, l = parts.length; i < l; i++) {
+                        // cache the part
+                        var part = parts[i];
+                        // get the prop name and possible array indices
+                        var prop = (part.match(/^[^\[]+/g) || [""])[0],
+                            indices = (part.match(/\[\d+\]/g) || []);
+                        // reset the part
+                        parts[i] = [part, prop, indices];
                     }
+                    // 5) check the path existence
+                    var old = object,
+                        obj = object;
+                    for (var i = 0, l = parts.length; i < l; i++) {
+                        // cache the part
+                        var part = parts[i];
+                        // get the prop name and possible array indices
+                        var prop = part[1],
+                            indices = part[2];
 
-                },
-                "trigger": function() {
+                        if (!obj[prop] && !obj.hasOwnProperty(prop)) {
+                            return false;
+                        } else {
+                            // reset the ref, as the object was found
+                            old = obj;
+                            obj = obj[prop];
+                        }
 
-                    // cache the object
-                    var _ = this,
-                        object = _.object,
-                        args = to_array(arguments);
+                        // check for indices
+                        if (indices.length) {
+                            for (var j = 0, ll = indices.length; j < ll; j++) {
+                                var index = indices[j].replace(/^\[|\]$/g, "");
+                                // get the new object
+                                old = obj;
+                                obj = obj[index];
 
-                    // loop through array and unset keys
-                    for (var i = 0, l = args.length; i < l; i++) {
-                        // cache the current pair
-                        var key = args[i];
+                                if (dtype.isnot(obj, "Object|Array")) {
+                                    return false;
+                                }
 
-                        // if key does not exists skip iteration
-                        if (!_.hasKey(key)) continue;
-
-                        // call the callback (controller) if provided
-                        if (this.controller) this.controller.call(_, key, "trigger", object[key], undefined, Date.now());
-                    }
-
-                },
-                // helper methods
-                "get": function(property) {
-
-                    // cache the object
-                    var _ = this,
-                        object = _.object;
-
-                    return object[property] || undefined;
-
-                },
-                "keys": function() {
-
-                    // cache the object
-                    var _ = this,
-                        object = _.object,
-                        keys = [];
-
-                    for (var key in object) {
-
-                        if (_.hasKey(key)) keys.push(key);
-
-                    }
-
-                    // return the keys
-                    return keys;
-
-                },
-                "entries": function() {
-
-                    // cache the object
-                    var _ = this,
-                        object = _.object,
-                        entries = [];
-
-                    for (var key in object) {
-
-                        if (_.hasKey(key)) entries.push([key, object[key]]);
-
-                    }
-
-                    // return the keys
-                    return entries;
-
-                },
-                "hasKey": function(key) {
-
-                    // cache the object
-                    var _ = this,
-                        object = _.object;
-
-                    // return boolean indicating whether the object has the provided key
-                    return (object.hasOwnProperty(key) ? true : false);
-
-                },
-                "keyHasValue": function(key, value) {
-
-                    // cache the object
-                    var _ = this,
-                        object = _.object;
-
-                    // return boolean indicating whether the object has the provided key
-                    return ((_.hasKey(key) && object[key] === value) ? true : false);
-
-                },
-                "raw": function(clone) {
-
-                    // cache the object
-                    var _ = this,
-                        object = _.object;
-
-                    // clone the object if clone flag provided
-                    if (clone) {
-
-                        // create the new object
-                        var obj = {};
-                        // copy the properties
-                        for (var key in object) {
-                            if (_.hasKey(key)) {
-                                obj[key] = object[key];
                             }
                         }
-                        // reset the object ref
-                        object = obj;
 
                     }
 
-                    // return boolean indicating whether the object has the provided key
-                    return object;
+                    // ------------------------------------
 
+                    // remove the last property from the path
+                    delete old[prop];
+
+                    // call the callback (controller) if provided
+                    if (_.controller) _.controller.call(_, path, "delete", undefined, obj, date);
+
+                    // return the object with the updated/new path
+                    return { val: obj };
                 }
             },
 
