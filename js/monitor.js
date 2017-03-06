@@ -134,46 +134,6 @@
 
         // =============================== Core Library Functions
 
-        /**
-         * @description [Normalize the passed in parameters. As the functions signature varies,
-         *               the arguments need to be normalized.]
-         * @return {Array} [The normalized array containing the passed in arguments.]
-         */
-        function normalize_args() {
-
-            // http://stackoverflow.com/a/960870
-            // var args = [].slice.call(arguments);
-
-            // work the arguments
-            var args = arguments,
-                argl = args.length;
-
-            // args can either be 2 items or 1
-            if (!-~[1, 2].indexOf(argl)) return [];
-
-            // convert arguments to an array
-            if (argl === 2) {
-                args = [
-                    [arguments[0], arguments[1]]
-                ];
-            } else {
-                if (dtype(arguments[0], "object")) {
-                    // turn the object into an array
-                    args = [];
-                    var obj = arguments[0];
-                    for (var key in obj) {
-                        if (obj.hasOwnProperty(key)) {
-                            args.push([key, obj[key]]);
-                        }
-                    }
-                }
-            }
-
-            // return the normalized arguments
-            return args;
-
-        }
-
         // =============================== Library Class
 
         var Library = class__({
@@ -194,16 +154,13 @@
 
             // class methods
             "methods__": {
-
-                // "getPath", "setPath", "set", "unset", "trigger", "get", "keys", "entries", "hasKey", "keyHasValue", "raw"
-                //
-                // "keys", "entries" => works only for single layer objects
-                //
-                // get => hasKey, keyHasValue
-                // set => unset
-                // trigger
-
-                "get": function(path, value) {
+                /**
+                 * @description [Check whether the object has the provided path.]
+                 * @param  {String} path        [The path to check.]
+                 * @return {Boolean|Object}     [False if path does not exist. Otherwise, an object containing the value at the
+                 *                               at the provided object path.]
+                 */
+                "get": function(path) {
 
                     // cache the object
                     var _ = this,
@@ -262,6 +219,12 @@
                     // return the object with the updated/new path
                     return { val: obj };
                 },
+                /**
+                 * @description [Sets the provided value at the provided path.]
+                 * @param  {String} path        [The path to set.]
+                 * @param  {Any} value        [The value to set.]
+                 * @return {Object}     [The Monitor object.]
+                 */
                 "set": function(path, value) {
 
                     // cache the object
@@ -382,46 +345,11 @@
                     return object;
 
                 },
-                "trigger": function(path, value) {
-
-                    // cache the object
-                    var _ = this,
-                        object = _.object,
-                        cache = _.cache,
-                        date = Date.now(),
-                        entry, type = "trigger";
-
-                    // 1) first check cache for path
-                    entry = cache[path.trim()];
-
-                    // if no cache entry run the get method
-                    // i.e. this path might have been added before
-                    // the library started to monitor the object
-                    if (!entry) {
-                        // the path check
-                        var result = _.get(path);
-                        // the result must be of type object
-                        var check = (dtype.is(result, "Object"));
-                        // get the value of the get check, else default to undefined
-                        // checks are done separately as the value undefined is an
-                        // actual value that the path by result in
-                        var val = (check ? result.val : undefined);
-                        // create the "fake" entry, only needs the value
-                        entry = [, , val];
-                    }
-
-                    // determine the old value
-                    var old_value = (entry ? entry[2] : undefined);
-
-                    // update the cache
-                    cache[path] = [date, type, value];
-
-                    // ------------------------------------
-
-                    // call the callback (controller) if provided
-                    if (_.controller) _.controller.call(_, path, type, (value || undefined), old_value, date);
-
-                },
+                /**
+                 * @description [Unsets the last object of the provided path.]
+                 * @param  {String} path         [The path to unset from.]
+                 * @return {Undefined}           [Nothing is returned.]
+                 */
                 "unset": function(path) {
 
                     // cache the object
@@ -489,8 +417,52 @@
                     // call the callback (controller) if provided
                     if (_.controller) _.controller.call(_, path, "delete", undefined, obj, date);
 
-                    // return the object with the updated/new path
-                    return { val: obj };
+                },
+                /**
+                 * @description [Triggers the controller. Using the provided path and value.]
+                 * @param  {String} path         [The path to check.]
+                 * @param  {Any} value           [The value to use.]
+                 * @return {Undefined}           [Nothing is returned.]
+                 */
+                "trigger": function(path, value) {
+
+                    // cache the object
+                    var _ = this,
+                        object = _.object,
+                        cache = _.cache,
+                        date = Date.now(),
+                        entry, type = "trigger";
+
+                    // 1) first check cache for path
+                    entry = cache[path.trim()];
+
+                    // if no cache entry run the get method
+                    // i.e. this path might have been added before
+                    // the library started to monitor the object
+                    if (!entry) {
+                        // the path check
+                        var result = _.get(path);
+                        // the result must be of type object
+                        var check = (dtype.is(result, "Object"));
+                        // get the value of the get check, else default to undefined
+                        // checks are done separately as the value undefined is an
+                        // actual value that the path by result in
+                        var val = (check ? result.val : undefined);
+                        // create the "fake" entry, only needs the value
+                        entry = [, , val];
+                    }
+
+                    // determine the old value
+                    var old_value = (entry ? entry[2] : undefined);
+
+                    // update the cache
+                    cache[path] = [date, type, value];
+
+                    // ------------------------------------
+
+                    // call the callback (controller) if provided
+                    if (_.controller) _.controller.call(_, path, type, (value || undefined), old_value, date);
+
                 }
             },
 
