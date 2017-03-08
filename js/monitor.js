@@ -296,8 +296,9 @@
                             obj[prop] = value;
                         } else {
 
-                            // set the object path
-                            var crumb = (indices.length ? [] : {});
+                            // check if the object exists (set the object path)
+                            // check if the property exists else add a new object
+                            var crumb = (obj[prop] ? obj[prop] : (indices.length ? [] : {}));
                             obj[prop] = crumb;
                             // reset the obj refs
                             old = obj;
@@ -317,7 +318,8 @@
                                         obj[index] = value;
                                     } else { //
                                         // more props to loop over
-                                        var crumb = {};
+                                        // check if the property exists else add a new object
+                                        var crumb = (obj[index] ? obj[index] : {});
                                         obj[index] = crumb;
                                         // reset the obj refs
                                         old = obj;
@@ -325,7 +327,8 @@
                                     }
                                 } else {
                                     // set the object path
-                                    var crumb = [];
+                                    // check if the property exists else add a new object
+                                    var crumb = (obj[index] ? obj[index] : []);
                                     obj[index] = crumb;
                                     // reset the obj refs
                                     old = obj;
