@@ -149,6 +149,7 @@
                 this.controller = (controller || undefined);
                 this.object = (object || {});
                 this.cache = {};
+                this.callbacks = {};
 
             },
 
@@ -342,7 +343,10 @@
                     // ------------------------------------
 
                     // call the callback (controller) if provided
-                    if (_.controller) _.controller.call(_, path, type, value, old_value, Date.now());
+                    if (_.controller) _.controller.call(_, path, type, value, old_value, date);
+                    // call the callback if one exists
+                    var callback = this.callbacks[path];
+                    if (callback) callback.call(_, path, type, value, old_value, date);
 
                     // return the object with the updated/new path
                     return object;
@@ -419,6 +423,9 @@
 
                     // call the callback (controller) if provided
                     if (_.controller) _.controller.call(_, path, "delete", undefined, obj, date);
+                    // call the callback if one exists
+                    var callback = this.callbacks[path];
+                    if (callback) callback.call(_, path, "delete", undefined, obj, date);
 
                 },
                 /**
@@ -465,8 +472,23 @@
 
                     // call the callback (controller) if provided
                     if (_.controller) _.controller.call(_, path, type, (value || undefined), old_value, date);
+                    // call the callback if one exists
+                    var callback = this.callbacks[path];
+                    if (callback) callback.call(_, path, type, (value || undefined), old_value, date);
 
-                }
+                },
+                "on": function(path, callback) {
+                    // add the callback to the callback registry
+                    // existing callbacks with the same path will overwrite existing callback
+                    this.callbacks[path] = callback;
+                },
+                "off": function(path) {
+                    // check that the callback exists
+                    var callback = this.callbacks[path];
+                    // add the callback to the callback registry
+                    if (callback) delete this.callbacks[path];
+                },
+                "disable": function() {}
             },
 
             // class to extend
