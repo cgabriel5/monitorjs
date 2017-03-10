@@ -149,7 +149,10 @@
                 this.controller = (controller || undefined);
                 this.object = (object || {});
                 this.cache = {};
-                this.callbacks = {};
+                this.callbacks = {
+                    strings: [],
+                    regexps: [],
+                };
 
             },
 
@@ -342,11 +345,43 @@
 
                     // ------------------------------------
 
-                    // call the callback (controller) if provided
-                    if (_.controller) _.controller.call(_, path, type, value, old_value, date);
-                    // call the callback if one exists
-                    var callback = this.callbacks[path];
-                    if (callback) callback.call(_, path, type, value, old_value, date);
+                    // the callback args
+                    var args = [path, type, value, old_value, date];
+                    // run the callback (controller) if provided
+                    if (_.controller) _.controller.apply(_, args);
+
+                    // run any callbacks that match the path (either string or regexp)
+                    var callbacks = this.callbacks;
+                    // loop over strings array
+                    var strings = callbacks.strings;
+                    for (var i = 0, l = strings.length; i < l; i++) {
+                        // cache the needed info
+                        var callback = strings[i],
+                            cb_path = callback[0],
+                            cb_cb = callback[1];
+                        // check if the paths match
+                        if (cb_path === path) {
+                            // console.log("strings::SET", path, cb_path);
+                            // run the callback
+                            cb_cb.apply(_, args);
+                        }
+                    }
+                    // loop over regexps array
+                    var regexps = callbacks.regexps;
+                    for (var i = 0, l = regexps.length; i < l; i++) {
+                        // cache the needed info
+                        var callback = regexps[i],
+                            cb_path = callback[0],
+                            cb_cb = callback[1];
+                        // reusing regexp needs resetting of the lastIndex prop [https://siderite.blogspot.com/2011/11/careful-when-reusing-javascript-regexp.html#at3060321440]
+                        cb_path.lastIndex = 0;
+                        // check if the paths match
+                        if (cb_path.test(path)) {
+                            // console.log("regexps::SET", path, cb_path);
+                            // run the callback
+                            cb_cb.apply(_, args);
+                        }
+                    }
 
                     // return the object with the updated/new path
                     return object;
@@ -421,11 +456,43 @@
                     // remove the last property from the path
                     delete old[prop];
 
-                    // call the callback (controller) if provided
-                    if (_.controller) _.controller.call(_, path, "delete", undefined, obj, date);
-                    // call the callback if one exists
-                    var callback = this.callbacks[path];
-                    if (callback) callback.call(_, path, "delete", undefined, obj, date);
+                    // the callback args
+                    var args = [path, "delete", undefined, obj, date];
+                    // run the callback (controller) if provided
+                    if (_.controller) _.controller.apply(_, args);
+
+                    // run any callbacks that match the path (either string or regexp)
+                    var callbacks = this.callbacks;
+                    // loop over strings array
+                    var strings = callbacks.strings;
+                    for (var i = 0, l = strings.length; i < l; i++) {
+                        // cache the needed info
+                        var callback = strings[i],
+                            cb_path = callback[0],
+                            cb_cb = callback[1];
+                        // check if the paths match
+                        if (cb_path === path) {
+                            // console.log("strings::UNSET", path, cb_path);
+                            // run the callback
+                            cb_cb.apply(_, args);
+                        }
+                    }
+                    // loop over regexps array
+                    var regexps = callbacks.regexps;
+                    for (var i = 0, l = regexps.length; i < l; i++) {
+                        // cache the needed info
+                        var callback = regexps[i],
+                            cb_path = callback[0],
+                            cb_cb = callback[1];
+                        // reusing regexp needs resetting of the lastIndex prop [https://siderite.blogspot.com/2011/11/careful-when-reusing-javascript-regexp.html#at3060321440]
+                        cb_path.lastIndex = 0;
+                        // check if the paths match
+                        if (cb_path.test(path)) {
+                            // console.log("regexps::UNSET", path, cb_path);
+                            // run the callback
+                            cb_cb.apply(_, args);
+                        }
+                    }
 
                 },
                 /**
@@ -470,25 +537,86 @@
 
                     // ------------------------------------
 
-                    // call the callback (controller) if provided
-                    if (_.controller) _.controller.call(_, path, type, (value || undefined), old_value, date);
-                    // call the callback if one exists
-                    var callback = this.callbacks[path];
-                    if (callback) callback.call(_, path, type, (value || undefined), old_value, date);
+                    // the callback args
+                    var args = [path, type, (value || undefined), old_value, date];
+                    // run the callback (controller) if provided
+                    if (_.controller) _.controller.apply(_, args);
+
+                    // run any callbacks that match the path (either string or regexp)
+                    var callbacks = this.callbacks;
+                    // loop over strings array
+                    var strings = callbacks.strings;
+                    for (var i = 0, l = strings.length; i < l; i++) {
+                        // cache the needed info
+                        var callback = strings[i],
+                            cb_path = callback[0],
+                            cb_cb = callback[1];
+                        // check if the paths match
+                        if (cb_path === path) {
+                            // console.log("strings::TRIGGER", path, cb_path);
+                            // run the callback
+                            cb_cb.apply(_, args);
+                        }
+                    }
+                    // loop over regexps array
+                    var regexps = callbacks.regexps;
+                    for (var i = 0, l = regexps.length; i < l; i++) {
+                        // cache the needed info
+                        var callback = regexps[i],
+                            cb_path = callback[0],
+                            cb_cb = callback[1];
+                        // reusing regexp needs resetting of the lastIndex prop [https://siderite.blogspot.com/2011/11/careful-when-reusing-javascript-regexp.html#at3060321440]
+                        cb_path.lastIndex = 0;
+                        // check if the paths match
+                        if (cb_path.test(path)) {
+                            // console.log("regexps::TRIGGER", path, cb_path);
+                            // run the callback
+                            cb_cb.apply(_, args);
+                        }
+                    }
 
                 },
                 "on": function(path, callback) {
                     // add the callback to the callback registry
                     // existing callbacks with the same path will overwrite existing callback
-                    this.callbacks[path] = callback;
+                    // add to the appropriate array
+                    this.callbacks[(dtype(path) === "string" ? "strings" : "regexps")].push([path, callback]);
                 },
                 "off": function(path) {
-                    // check that the callback exists
-                    var callback = this.callbacks[path];
-                    // add the callback to the callback registry
-                    if (callback) delete this.callbacks[path];
+
+                    // run any callbacks that match the path (either string or regexp)
+                    var callbacks = this.callbacks;
+                    // loop over strings array
+                    var strings = callbacks.strings;
+                    for (var i = 0, l = strings.length; i < l; i++) {
+                        // cache the needed info
+                        var callback = strings[i],
+                            cb_path = callback[0],
+                            cb_cb = callback[1];
+                        // check if the paths match
+                        if (cb_path === path) {
+                            // console.log("strings::OFF", path, cb_path);
+                            // remove the listener from the array
+                            strings.splice(i, 1);
+                        }
+                    }
+                    // loop over regexps array
+                    var regexps = callbacks.regexps;
+                    for (var i = 0, l = regexps.length; i < l; i++) {
+                        // cache the needed info
+                        var callback = regexps[i],
+                            cb_path = callback[0],
+                            cb_cb = callback[1];
+                        // check if the paths match
+                        if (cb_path.toString() === path.toString()) {
+                            // console.log("regexps::OFF", path, cb_path);
+                            // remove the listener from the array
+                            regexps.splice(i, 1);
+                        }
+                    }
+
                 },
-                "disable": function() {}
+                // "disable": function() {}
             },
 
             // class to extend
