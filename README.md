@@ -15,6 +15,7 @@ Small library that monitors an object.
 
 [Usage](#usage)  
 [Contributing](#contributing)  
+[TODO](#todo)  
 [License](#license)  
 
 <a name="what-it-does"></a>
@@ -117,6 +118,10 @@ For a better understanding check out `index.html` and `app.js`. `app.js` contain
 Contributions are welcome! Found a bug, feel like documentation is lacking/confusing and needs an update, have performance/feature suggestions or simply found a typo? Let me know! :)
 
 See how to contribute [here](https://github.com/cgabriel5/monitorjs/blob/master/CONTRIBUTING.md).
+
+### TODO
+
+- [ ] Clean/re-work code better performance.
 
 <a name="license"></a>
 ### License
