@@ -1,4 +1,4 @@
-// define the vars outsude to access via console
+// define the vars outside to access via console
 var Monitor, user, settings;
 
 document.onreadystatechange = function() {
@@ -18,6 +18,7 @@ document.onreadystatechange = function() {
         // ------------------------------------
         // Example 1
 
+        // element where the name will get updated
         var $name = document.getElementById("name");
 
         // create the object to monitor
