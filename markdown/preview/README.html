@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>monitor (monitorjs)</title>
+    <link type="text/css" rel="stylesheet" href="assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="assets/css/hljs-github.min.css" />
+</head>
+
+<body>
+    <article class="markdown-body"><h1 id="monitor-(monitorjs)">monitor (monitorjs)</h1>
+<p>Small library that monitors an object.</p>
+<h5 id="table-of-contents">Table of Contents</h5>
+<p><a href="#what-it-does">What It Does</a><br><a href="#add-to-project">Add To Project</a><br><a href="#access-library">Access Library</a><br><a href="#instance-creation">Instance Creation</a><br><a href="#api">API</a>   </p>
+<ul class="list">
+<li><a href="#instance-api">Instance</a><ul class="list">
+<li><a href="#instance-quicktable-reference">QuickTable</a>  </li>
+<li><a href="#instance-methods-long">Methods</a> </li>
+</ul>
+</li>
+</ul>
+<p><a href="#usage">Usage</a><br><a href="#contributing">Contributing</a><br><a href="#todo">TODO</a><br><a href="#license">License</a>  </p>
+<p><a name="what-it-does"></a></p>
+<h3 id="what-it-does">What It Does</h3>
+<ul class="list">
+<li>Monitors an object for any changes (adding / updating / triggering / deleting properties).</li>
+</ul>
+<p><a name="add-to-project"></a></p>
+<h3 id="add-to-project">Add To Project</h3>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/lib.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><p><a name="access-library"></a></p>
+<h3 id="access-library">Access Library</h3>
+<pre class="hljs"><code><span class="hljs-keyword">var</span> Monitor = <span class="hljs-built_in">window</span>.app.libs.Monitor;</code></pre><p><a name="instance-creation"></a></p>
+<h3 id="instance-creation">Instance Creation</h3>
+<pre class="hljs"><code><span class="hljs-keyword">var</span> monitor = <span class="hljs-keyword">new</span> Monitor(controller, obj);
+<span class="hljs-comment">// p1: Optional Controller Function</span>
+<span class="hljs-comment">// p2: The object to monitor</span>
+
+<span class="hljs-comment">// Using the "new" keyword is not necessary. If not used</span>
+<span class="hljs-comment">// the library will make sure to use it for you.</span>
+<span class="hljs-keyword">var</span> monitor = Monitor(controller, obj);</code></pre><p><a name="api"></a></p>
+<h3 id="api">API</h3>
+<p> <a name="instance-api"></a></p>
+<h3 id="api-&mdash;-instance">API &mdash; Instance</h3>
+<p><a name="instance-quicktable-reference"></a></p>
+<h3 id="instance-quicktable-reference">Instance QuickTable Reference</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>get</strong></td>
+<td>Gets the value at the provided object path</td>
+</tr>
+<tr>
+<td><strong>set</strong></td>
+<td>Sets the provided value at the provided path</td>
+</tr>
+<tr>
+<td><strong>unset</strong></td>
+<td>Removes the last property of the provided path</td>
+</tr>
+<tr>
+<td><strong>trigger</strong></td>
+<td>Triggers the provided path</td>
+</tr>
+<tr>
+<td><strong>on</strong></td>
+<td>Adds a object path listener</td>
+</tr>
+<tr>
+<td><strong>off</strong></td>
+<td>Removes the object path listener</td>
+</tr>
+</tbody>
+</table>
+<p><a name="instance-methods-long"></a></p>
+<h3 id="instance-methods">Instance Methods</h3>
+<p><strong>monitor.get</strong> Gets the value at the provided object path.</p>
+<pre class="hljs"><code>monitor.get(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><strong>monitor.get</strong> Sets the provided value at the provided path.</p>
+<pre class="hljs"><code>monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>);</code></pre><p><strong>monitor.unset</strong> Removes the last property of the provided path.</p>
+<pre class="hljs"><code>monitor.unset(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><strong>monitor.trigger</strong> Triggers the provided path.</p>
+<pre class="hljs"><code>monitor.trigger(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><strong>monitor.on</strong> Adds a object path listener.</p>
+<pre class="hljs"><code>monitor.on(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><strong>monitor.off</strong> Removes the object path listener.</p>
+<pre class="hljs"><code>monitor.off(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><a name="usage"></a></p>
+<h3 id="usage">Usage</h3>
+<p>For a better understanding check out <code>index.html</code> and <code>app.js</code>. <code>app.js</code> contains examples showing how the library is used.</p>
+<p><a name="contributing"></a></p>
+<h3 id="contributing">Contributing</h3>
+<p>Contributions are welcome! Found a bug, feel like documentation is lacking/confusing and needs an update, have performance/feature suggestions or simply found a typo? Let me know! :)</p>
+<p>See how to contribute <a href="https://github.com/cgabriel5/monitorjs/blob/master/CONTRIBUTING.md">here</a>.</p>
+<h3 id="todo">TODO</h3>
+<ul class="list">
+<li>[ ] Clean/re-work code better performance.</li>
+</ul>
+<p><a name="license"></a></p>
+<h3 id="license">License</h3>
+<p>This project uses the <a href="https://github.com/cgabriel5/monitorjs/blob/master/LICENSE.txt">MIT License</a>.</p>
+    </article>
+</body>
+
+</html>
