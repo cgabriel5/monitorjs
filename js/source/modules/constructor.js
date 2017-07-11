@@ -420,6 +420,14 @@ var Library = class__({
                 }
             }
         },
+        /**
+         * @description [Clears the Monitor's cache.]
+         * @return {Undefined} [Nothing is returned.]
+         */
+        "clearCache": function() {
+            // clear the cache
+            this.cache = {};
+        },
         // "disable": function() {}
     },
     // class to extend
