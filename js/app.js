@@ -485,54 +485,67 @@
                  */
                 "on": function(path, callback) {
                     // add the callback to the callback registry
-                    // get the provided path type (string or regexp)
-                    var type = dtype(path);
                     // if a string is provided, escape it to make it usable as a regexp string
-                    if (type === "string") path = new RegExp("^" + regexp_escape(path) + "$", "y");
+                    if (dtype(path) === "string") path = new RegExp("^" + regexp_escape(path) + "$", "");
                     else {
                         // get all the flags provided
-                        var flags_used = ["y"];
+                        var flags_used = [];
                         var flags = {
                             "global": "g",
                             "ignoreCase": "i",
                             "multiline": "m",
                             "unicode": "u",
-                            // y (sticky) flag will always be added
-                            // "sticky": "y"
+                            "sticky": "y"
                         };
+                        // loop over the flags
                         for (var flag in flags) {
                             if (flags.hasOwnProperty(flag)) {
-                                if (path[flag]) flags_used.push(flags[flag]);
+                                // if the flag is active...
+                                if (path[flag]) {
+                                    // add the flag to the flags_used array
+                                    flags_used.push(flags[flag]);
+                                }
                             }
                         }
-                        path = new RegExp(path.toString()
-                            .replace(/^\/|\/$/g, ""), flags_used.join(""));
+                        // remove the flags from the original path RegExp object
+                        var regexp_path_string = path.toString();
+                        var last_slash_index = regexp_path_string.lastIndexOf("/");
+                        // reset the regexp path string
+                        regexp_path_string = regexp_path_string.substring(1, last_slash_index);
+                        // make the new path
+                        path = new RegExp(regexp_path_string, flags_used.join(""));
                     }
                     // use the regex string as the name of the callback
                     callback.monitorName = path.toString();
-                    // add to the regexps array
+                    // add to the callbacks array
                     this.callbacks.push([path, callback]);
                 },
                 /**
                  * @description [Removes a path listener.]
                  * @param  {String|RegExp} path [The path to listen to.]
-                 * @param  {Function} callback  [The callback to run.]
+                 * @param  {Function} cb [The callback to run.]
                  * @return {Undefined}          [Nothing is returned.]
                  */
-                "off": function(path) {
+                "off": function(path, cb) {
                     // run any callbacks that match the path
                     var callbacks = this.callbacks;
+                    var removed = false; // was a callback removed
                     for (var i = 0, l = callbacks.length; i < l; i++) {
                         // cache the needed info
                         var callback = callbacks[i],
                             cb_path = callback[0],
                             cb_cb = callback[1];
+                        // if a string is provided, escape it to make it usable as a regexp string
+                        if (dtype(path) === "string") path = new RegExp("^" + regexp_escape(path) + "$", "");
                         // check if the paths match
                         if (cb_path.toString() === path.toString()) {
                             // remove the listener from the array
-                            regexps.splice(i, 1);
+                            callbacks.splice(i, 1);
+                            removed = true;
                         }
                     }
+                    // if a single callback was removed and a callback was provide...invoke it
+                    if (cb && removed) cb.apply(this, [path]);
                 },
                 /**
                  * @description [Clears the Monitor's cache.]
@@ -611,8 +624,8 @@ document.onreadystatechange = function() {
         };
         // create new monitor
         user = new Monitor(controller, obj);
-        // start listening to the "/^name.*/" path
-        user.on(/^name\.*/g, function(filter, path, type, newValue, oldValue, time, conditions) {
+        // start listening to the "name.*" path
+        user.on(/^name\.*$/, function(filter, path, type, newValue, oldValue, time, conditions) {
             console.log("objectOn[user]---->", filter, path, type, newValue, oldValue, time, conditions);
         });
         // trigger the name path. this will run the controller with the provided
@@ -628,9 +641,14 @@ document.onreadystatechange = function() {
         setTimeout(function() {
             user.unset("name");
         }, 3000);
-        // stop listening to the "/^name.*/" path
+        // stop listening to the "name.*" path
         setTimeout(function() {
-            user.off(/^name\.*/g);
+            user.off(/^name\.*$/, function(path) {
+                console.log("No longer listening to", path);
+            });
+            // will only activate the controller but the the monitor.on
+            // as it was removed in the previous line
+            user.set("name.first", "Jenny");
         }, 4000);
         // will only trigger the controller
         setTimeout(function() {
@@ -659,7 +677,9 @@ document.onreadystatechange = function() {
         // update the first name...
         setTimeout(function() {
             // update props
-            settings.set("appearance.theme.dark", false);
+            settings.set("appearance.theme.dark", false, {
+                "someCondition": true
+            });
             settings.set("appearance.theme.light", true);
             // add a random prop
             settings.set("appearance.colors.main", "purple");
