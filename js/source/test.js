@@ -26,8 +26,8 @@ document.onreadystatechange = function() {
             }
         };
         // controller function to handle object changes
-        var controller = function(path, type, newValue, oldValue, time) {
-            console.log("controller[user]-->", path, type, newValue, oldValue, time);
+        var controller = function(path, type, newValue, oldValue, time, conditions) {
+            console.log("controller[user]-->", path, type, newValue, oldValue, time, conditions);
             // do something when the name.* path gets altered
             if (/^name/.test(path)) {
                 if (type !== "delete") { // add/update/trigger
@@ -48,8 +48,8 @@ document.onreadystatechange = function() {
         // create new monitor
         user = new Monitor(controller, obj);
         // start listening to the "/^name.*/" path
-        user.on(/^name\.*/g, function(path, type, newValue, oldValue, time) {
-            console.log("objectOn[user]---->", path, type, newValue, oldValue, time);
+        user.on(/^name\.*/g, function(filter, path, type, newValue, oldValue, time, conditions) {
+            console.log("objectOn[user]---->", filter, path, type, newValue, oldValue, time, conditions);
         });
         // trigger the name path. this will run the controller with the provided
         // path and value provided
@@ -75,8 +75,8 @@ document.onreadystatechange = function() {
         // ------------------------------------
         //  Example 2
         // controller function to handle object changes
-        var controller = function(path, type, newValue, oldValue, time) {
-            console.log("controller[settings]-->", path, type, newValue, oldValue, time);
+        var controller = function(path, type, newValue, oldValue, time, conditions) {
+            console.log("controller[settings]-->", path, type, newValue, oldValue, time, conditions);
         };
         // create the object to monitor
         settings = new Monitor(controller, {

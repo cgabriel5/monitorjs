@@ -91,6 +91,17 @@ dtype.isnot = function(object, types) {
     return !this.is(object, types);
 };
 /**
+ * @description [Escapes string to use it as a regexp.]
+ * @param  {String} string [The literal string to escape.]
+ * @return {String}                [The escaped string.]
+ * @source [https://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript]
+ * @source [https://stackoverflow.com/a/30851002]
+ *
+ */
+function regexp_escape(string) {
+    return string.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, "\\$&");
+}
+/**
  * @description [A class wrapper. Creates a class based on provided object containing class constructor__ and methods__.
  *               If class needs to extend another, provide it under the extend__ property.]
  * @param  {Object} cobject [The class object containing three properties: constructor__, methods__, and extend__.

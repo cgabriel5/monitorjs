@@ -95,6 +95,17 @@
             return !this.is(object, types);
         };
         /**
+         * @description [Escapes string to use it as a regexp.]
+         * @param  {String} string [The literal string to escape.]
+         * @return {String}                [The escaped string.]
+         * @source [https://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript]
+         * @source [https://stackoverflow.com/a/30851002]
+         *
+         */
+        function regexp_escape(string) {
+            return string.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, "\\$&");
+        }
+        /**
          * @description [A class wrapper. Creates a class based on provided object containing class constructor__ and methods__.
          *               If class needs to extend another, provide it under the extend__ property.]
          * @param  {Object} cobject [The class object containing three properties: constructor__, methods__, and extend__.
@@ -137,10 +148,7 @@
                 this.controller = (controller || undefined);
                 this.object = (object || {});
                 this.cache = {};
-                this.callbacks = {
-                    strings: [],
-                    regexps: [],
-                };
+                this.callbacks = [];
             },
             // class methods
             "methods__": {
@@ -158,7 +166,7 @@
                     path = path.replace(/^\.|\.$/g, "");
                     // 2) break apart the path
                     var parts = path.split(".");
-                    // 4) parse each path
+                    // 3) parse each path
                     for (var i = 0, l = parts.length; i < l; i++) {
                         // cache the part
                         var part = parts[i];
@@ -168,7 +176,7 @@
                         // reset the part
                         parts[i] = [part, prop, indices];
                     }
-                    // 5) check the path existence
+                    // 4) check the path existence
                     var old = object,
                         obj = object;
                     for (var i = 0, l = parts.length; i < l; i++) {
@@ -204,16 +212,19 @@
                 },
                 /**
                  * @description [Sets the provided value at the provided path.]
-                 * @param  {String} path        [The path to set.]
-                 * @param  {Any} value        [The value to set.]
+                 * @param  {String|RegExp} path [The path to use.]
+                 * @param  {Any} value          [The value to set.]
+                 * @param  {Object} conditions  [Object containing possible conditions that can be used
+                 *                               to determine whether to run any code.]
                  * @return {Object}     [The Monitor object.]
                  */
-                "set": function(path, value) {
+                "set": function(path, value, conditions) {
                     // cache the object
                     var _ = this,
                         object = _.object,
                         cache = _.cache,
                         date = Date.now(),
+                        conditions = conditions || {},
                         entry, type = "update";
                     // 1) first check cache for path
                     entry = cache[path.trim()];
@@ -237,13 +248,13 @@
                     // determine the old value
                     var old_value = (entry ? entry[2] : undefined);
                     // update the cache
-                    cache[path] = [date, type, value];
+                    cache[path] = [date, type, value, conditions];
                     // ------------------------------------
                     // 1) remove start/ending slashes
                     path = path.replace(/^\.|\.$/g, "");
                     // 2) break apart the path
                     var parts = path.split(".");
-                    // 4) parse each path
+                    // 3) parse each path
                     for (var i = 0, l = parts.length; i < l; i++) {
                         // cache the part
                         var part = parts[i];
@@ -253,7 +264,7 @@
                         // reset the part
                         parts[i] = [part, prop, indices];
                     }
-                    // 5) build the path
+                    // 4) build the path
                     var old = object,
                         obj = object;
                     for (var i = 0, l = parts.length; i < l; i++) {
@@ -306,39 +317,23 @@
                     }
                     // ------------------------------------
                     // the callback args
-                    var args = [path, type, value, old_value, date];
+                    var args = [path, type, value, old_value, date, conditions];
                     // run the callback (controller) if provided
                     if (_.controller) _.controller.apply(_, args);
-                    // run any callbacks that match the path (either string or regexp)
+                    // run any callbacks that match the path
                     var callbacks = this.callbacks;
-                    // loop over strings array
-                    var strings = callbacks.strings;
-                    for (var i = 0, l = strings.length; i < l; i++) {
+                    for (var i = 0, l = callbacks.length; i < l; i++) {
                         // cache the needed info
-                        var callback = strings[i],
+                        var callback = callbacks[i],
                             cb_path = callback[0],
-                            cb_cb = callback[1];
-                        // check if the paths match
-                        if (cb_path === path) {
-                            // console.log("strings::SET", path, cb_path);
-                            // run the callback
-                            cb_cb.apply(_, args);
-                        }
-                    }
-                    // loop over regexps array
-                    var regexps = callbacks.regexps;
-                    for (var i = 0, l = regexps.length; i < l; i++) {
-                        // cache the needed info
-                        var callback = regexps[i],
-                            cb_path = callback[0],
-                            cb_cb = callback[1];
+                            cb_cb = callback[1],
+                            cb_name = cb_cb.monitorName;
                         // reusing regexp needs resetting of the lastIndex prop [https://siderite.blogspot.com/2011/11/careful-when-reusing-javascript-regexp.html#at3060321440]
                         cb_path.lastIndex = 0;
                         // check if the paths match
                         if (cb_path.test(path)) {
-                            // console.log("regexps::SET", path, cb_path);
-                            // run the callback
-                            cb_cb.apply(_, args);
+                            // prepend the callback monitorName with the args then run the callback
+                            cb_cb.apply(_, [cb_name].concat(args.slice()));
                         }
                     }
                     // return the object with the updated/new path
@@ -359,7 +354,7 @@
                     path = path.replace(/^\.|\.$/g, "");
                     // 2) break apart the path
                     var parts = path.split(".");
-                    // 4) parse each path
+                    // 3) parse each path
                     for (var i = 0, l = parts.length; i < l; i++) {
                         // cache the part
                         var part = parts[i];
@@ -369,7 +364,7 @@
                         // reset the part
                         parts[i] = [part, prop, indices];
                     }
-                    // 5) check the path existence
+                    // 4) check the path existence
                     var old = object,
                         obj = object;
                     for (var i = 0, l = parts.length; i < l; i++) {
@@ -405,51 +400,38 @@
                     var args = [path, "delete", undefined, obj, date];
                     // run the callback (controller) if provided
                     if (_.controller) _.controller.apply(_, args);
-                    // run any callbacks that match the path (either string or regexp)
+                    // run any callbacks that match the path
                     var callbacks = this.callbacks;
-                    // loop over strings array
-                    var strings = callbacks.strings;
-                    for (var i = 0, l = strings.length; i < l; i++) {
+                    for (var i = 0, l = callbacks.length; i < l; i++) {
                         // cache the needed info
-                        var callback = strings[i],
+                        var callback = callbacks[i],
                             cb_path = callback[0],
-                            cb_cb = callback[1];
-                        // check if the paths match
-                        if (cb_path === path) {
-                            // console.log("strings::UNSET", path, cb_path);
-                            // run the callback
-                            cb_cb.apply(_, args);
-                        }
-                    }
-                    // loop over regexps array
-                    var regexps = callbacks.regexps;
-                    for (var i = 0, l = regexps.length; i < l; i++) {
-                        // cache the needed info
-                        var callback = regexps[i],
-                            cb_path = callback[0],
-                            cb_cb = callback[1];
+                            cb_cb = callback[1],
+                            cb_name = cb_cb.monitorName;
                         // reusing regexp needs resetting of the lastIndex prop [https://siderite.blogspot.com/2011/11/careful-when-reusing-javascript-regexp.html#at3060321440]
                         cb_path.lastIndex = 0;
                         // check if the paths match
                         if (cb_path.test(path)) {
-                            // console.log("regexps::UNSET", path, cb_path);
-                            // run the callback
-                            cb_cb.apply(_, args);
+                            // prepend the callback monitorName with the args then run the callback
+                            cb_cb.apply(_, [cb_name].concat(args.slice()));
                         }
                     }
                 },
                 /**
                  * @description [Triggers the controller. Using the provided path and value.]
-                 * @param  {String} path         [The path to check.]
+                 * @param  {String|RegExp} path  [The path to trigger.]
                  * @param  {Any} value           [The value to use.]
+                 * @param  {Object} conditions   [Object containing possible conditions that can be used
+                 *                                to determine whether to run any code.]
                  * @return {Undefined}           [Nothing is returned.]
                  */
-                "trigger": function(path, value) {
+                "trigger": function(path, value, conditions) {
                     // cache the object
                     var _ = this,
                         object = _.object,
                         cache = _.cache,
                         date = Date.now(),
+                        conditions = conditions || {},
                         entry, type = "trigger";
                     // 1) first check cache for path
                     entry = cache[path.trim()];
@@ -471,82 +453,94 @@
                     // determine the old value
                     var old_value = (entry ? entry[2] : undefined);
                     // update the cache
-                    cache[path] = [date, type, value];
+                    cache[path] = [date, type, value, conditions];
                     // ------------------------------------
                     // the callback args
-                    var args = [path, type, (value || undefined), old_value, date];
+                    var args = [path, type, (value || undefined), old_value, date, conditions];
                     // run the callback (controller) if provided
                     if (_.controller) _.controller.apply(_, args);
-                    // run any callbacks that match the path (either string or regexp)
+                    // run any callbacks that match the path
                     var callbacks = this.callbacks;
-                    // loop over strings array
-                    var strings = callbacks.strings;
-                    for (var i = 0, l = strings.length; i < l; i++) {
+                    for (var i = 0, l = callbacks.length; i < l; i++) {
                         // cache the needed info
-                        var callback = strings[i],
+                        var callback = callbacks[i],
                             cb_path = callback[0],
-                            cb_cb = callback[1];
-                        // check if the paths match
-                        if (cb_path === path) {
-                            // console.log("strings::TRIGGER", path, cb_path);
-                            // run the callback
-                            cb_cb.apply(_, args);
-                        }
-                    }
-                    // loop over regexps array
-                    var regexps = callbacks.regexps;
-                    for (var i = 0, l = regexps.length; i < l; i++) {
-                        // cache the needed info
-                        var callback = regexps[i],
-                            cb_path = callback[0],
-                            cb_cb = callback[1];
+                            cb_cb = callback[1],
+                            cb_name = cb_cb.monitorName;
                         // reusing regexp needs resetting of the lastIndex prop [https://siderite.blogspot.com/2011/11/careful-when-reusing-javascript-regexp.html#at3060321440]
                         cb_path.lastIndex = 0;
                         // check if the paths match
                         if (cb_path.test(path)) {
-                            // console.log("regexps::TRIGGER", path, cb_path);
-                            // run the callback
-                            cb_cb.apply(_, args);
+                            // prepend the callback monitorName with the args then run the callback
+                            cb_cb.apply(_, [cb_name].concat(args.slice()));
                         }
                     }
                 },
+                /**
+                 * @description [Add a path listener. When the path is altered via set/unset or simply triggered
+                 *               the listener it invoked.]
+                 * @param  {String|RegExp} path [The path to listen to.]
+                 * @param  {Function} callback  [The callback to run.]
+                 * @return {Undefined}          [Nothing is returned.]
+                 */
                 "on": function(path, callback) {
                     // add the callback to the callback registry
-                    // existing callbacks with the same path will overwrite existing callback
-                    // add to the appropriate array
-                    this.callbacks[(dtype(path) === "string" ? "strings" : "regexps")].push([path, callback]);
-                },
-                "off": function(path) {
-                    // run any callbacks that match the path (either string or regexp)
-                    var callbacks = this.callbacks;
-                    // loop over strings array
-                    var strings = callbacks.strings;
-                    for (var i = 0, l = strings.length; i < l; i++) {
-                        // cache the needed info
-                        var callback = strings[i],
-                            cb_path = callback[0],
-                            cb_cb = callback[1];
-                        // check if the paths match
-                        if (cb_path === path) {
-                            // console.log("strings::OFF", path, cb_path);
-                            // remove the listener from the array
-                            strings.splice(i, 1);
+                    // get the provided path type (string or regexp)
+                    var type = dtype(path);
+                    // if a string is provided, escape it to make it usable as a regexp string
+                    if (type === "string") path = new RegExp("^" + regexp_escape(path) + "$", "y");
+                    else {
+                        // get all the flags provided
+                        var flags_used = ["y"];
+                        var flags = {
+                            "global": "g",
+                            "ignoreCase": "i",
+                            "multiline": "m",
+                            "unicode": "u",
+                            // y (sticky) flag will always be added
+                            // "sticky": "y"
+                        };
+                        for (var flag in flags) {
+                            if (flags.hasOwnProperty(flag)) {
+                                if (path[flag]) flags_used.push(flags[flag]);
+                            }
                         }
+                        path = new RegExp(path.toString()
+                            .replace(/^\/|\/$/g, ""), flags_used.join(""));
                     }
-                    // loop over regexps array
-                    var regexps = callbacks.regexps;
-                    for (var i = 0, l = regexps.length; i < l; i++) {
+                    // use the regex string as the name of the callback
+                    callback.monitorName = path.toString();
+                    // add to the regexps array
+                    this.callbacks.push([path, callback]);
+                },
+                /**
+                 * @description [Removes a path listener.]
+                 * @param  {String|RegExp} path [The path to listen to.]
+                 * @param  {Function} callback  [The callback to run.]
+                 * @return {Undefined}          [Nothing is returned.]
+                 */
+                "off": function(path) {
+                    // run any callbacks that match the path
+                    var callbacks = this.callbacks;
+                    for (var i = 0, l = callbacks.length; i < l; i++) {
                         // cache the needed info
-                        var callback = regexps[i],
+                        var callback = callbacks[i],
                             cb_path = callback[0],
                             cb_cb = callback[1];
                         // check if the paths match
                         if (cb_path.toString() === path.toString()) {
-                            // console.log("regexps::OFF", path, cb_path);
                             // remove the listener from the array
                             regexps.splice(i, 1);
                         }
                     }
+                },
+                /**
+                 * @description [Clears the Monitor's cache.]
+                 * @return {Undefined} [Nothing is returned.]
+                 */
+                "clearCache": function() {
+                    // clear the cache
+                    this.cache = {};
                 },
                 // "disable": function() {}
             },
@@ -596,8 +590,8 @@ document.onreadystatechange = function() {
             }
         };
         // controller function to handle object changes
-        var controller = function(path, type, newValue, oldValue, time) {
-            console.log("controller[user]-->", path, type, newValue, oldValue, time);
+        var controller = function(path, type, newValue, oldValue, time, conditions) {
+            console.log("controller[user]-->", path, type, newValue, oldValue, time, conditions);
             // do something when the name.* path gets altered
             if (/^name/.test(path)) {
                 if (type !== "delete") { // add/update/trigger
@@ -618,8 +612,8 @@ document.onreadystatechange = function() {
         // create new monitor
         user = new Monitor(controller, obj);
         // start listening to the "/^name.*/" path
-        user.on(/^name\.*/g, function(path, type, newValue, oldValue, time) {
-            console.log("objectOn[user]---->", path, type, newValue, oldValue, time);
+        user.on(/^name\.*/g, function(filter, path, type, newValue, oldValue, time, conditions) {
+            console.log("objectOn[user]---->", filter, path, type, newValue, oldValue, time, conditions);
         });
         // trigger the name path. this will run the controller with the provided
         // path and value provided
@@ -645,8 +639,8 @@ document.onreadystatechange = function() {
         // ------------------------------------
         //  Example 2
         // controller function to handle object changes
-        var controller = function(path, type, newValue, oldValue, time) {
-            console.log("controller[settings]-->", path, type, newValue, oldValue, time);
+        var controller = function(path, type, newValue, oldValue, time, conditions) {
+            console.log("controller[settings]-->", path, type, newValue, oldValue, time, conditions);
         };
         // create the object to monitor
         settings = new Monitor(controller, {
