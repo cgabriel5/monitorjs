@@ -48,6 +48,15 @@ var monitor = new Monitor(controller, obj);
 // Using the "new" keyword is not necessary. If not used
 // the library will make sure to use it for you.
 var monitor = Monitor(controller, obj);
+
+// Note**: A controller is not necessary. Using listeners via on()
+// is perfectly fine.
+
+// this...
+var monitor = new Monitor(null, obj);
+// or this...
+var monitor = Monitor(null, obj);
+// work fine
 ```
 
 <a name="api"></a>
@@ -67,50 +76,98 @@ Method | Function
 **trigger** | Triggers the provided path
 **on** | Adds a object path listener
 **off** | Removes the object path listener
+**clearCache** | Clears the monitor's cache
 
 <a name="instance-methods-long"></a>
 ### Instance Methods
 
-**monitor.get** Gets the value at the provided object path.
+**monitor.get** &mdash; Gets the value at the provided object path.
 
 ```js
 monitor.get("path1.path2");
 ```
 
-**monitor.get** Sets the provided value at the provided path.
+**monitor.set** &mdash; Sets the provided value at the provided path.
 
 ```js
+// set the "path1.path2" to 12
 monitor.set("path1.path2", 12);
+
+// set the "path1.path2" to 12 + add a conditions object
+monitor.set("path1.path2", 12, {"someCondition": true});
 ```
 
-**monitor.unset** Removes the last property of the provided path.
+**monitor.unset** &mdash; Removes the last property of the provided path.
 
 ```js
 monitor.unset("path1.path2");
 ```
 
-**monitor.trigger** Triggers the provided path.
+**monitor.trigger** &mdash; Triggers the provided path.
 
 ```js
+// trigger the "path1.path2"
 monitor.trigger("path1.path2");
+
+// trigger the "path1.path2" + give a value
+monitor.trigger("path1.path2", 14);
+
+// trigger the "path1.path2" + give an empty value + add a conditions object
+monitor.set("path1.path2", undefined, {"someCondition": true});
 ```
 
-**monitor.on** Adds a object path listener.
+**monitor.on** &mdash; Adds an object path listener.
 
 ```js
-monitor.on("path1.path2");
+// listen to the path "path1.*"
+monitor.on(/^path1.\.*/g, function(filter, path, type, newValue, oldValue, time, conditions) {
+    // logic...
+});
+
+// use a string to listen to the "path1.path2" path
+// Note**: String paths get convert to RegExp objects.
+monitor.on("path1.path2", function(filter, path, type, newValue, oldValue, time, conditions) {
+    // logic
+});
+
+// listen to th paths "path1.*" except "path1.path4"
+monitor.on(/^path1(?!.path4).*/, function(filter, path, type, newValue, oldValue, time, conditions) {
+    // logic
+});
+
+// parameters
+// filter: The provided paths RegExp.toString string
+// path: The path being activated
+// type: The type of change (add/delete/update)
+// newValue: The changes new value
+// oldValue: The changes old value
+// time: The time the change occurred
+// conditions: Any passed in conditions
 ```
 
-**monitor.off** Removes the object path listener.
+**monitor.off** &mdash; Removes the object path listener.
 
 ```js
+// Note**: When removing a listener the provide path 
+// must be the same path that was used with the on() method.
 monitor.off("path1.path2");
+
+// callback can be provided
+monitor.off("path1.path2", function(path) {
+    // logic...
+});
+```
+
+**monitor.clearCache** &mdash; Clears the monitor's cache.
+
+```js
+monitor.clearCache();
 ```
 
 <a name="usage"></a>
 ### Usage
 
-For a better understanding check out `index.html` and `app.js`. `app.js` contains examples showing how the library is used.
+For a better understanding check out `index.html` and `js/source/test.js`. `js/source/test.js` contains examples showing how the library is used.
 
 <a name="contributing"></a>
 ### Contributing
@@ -121,7 +178,9 @@ See how to contribute [here](https://github.com/cgabriel5/monitorjs/blob/master/
 
 ### TODO
 
-- [ ] Clean/re-work code better performance.
+- [ ] Clean/re-work code for better performance.
+- [ ] Implement monitor listener namespaces.
+- [ ] Expand cache clearing functionality (i.e. clear only specific path caches).
 
 <a name="license"></a>
 ### License
