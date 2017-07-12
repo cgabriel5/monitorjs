@@ -47,8 +47,8 @@ document.onreadystatechange = function() {
         };
         // create new monitor
         user = new Monitor(controller, obj);
-        // start listening to the "/^name.*/" path
-        user.on(/^name\.*/g, function(filter, path, type, newValue, oldValue, time, conditions) {
+        // start listening to the "name.*" path
+        user.on(/^name\.*$/, function(filter, path, type, newValue, oldValue, time, conditions) {
             console.log("objectOn[user]---->", filter, path, type, newValue, oldValue, time, conditions);
         });
         // trigger the name path. this will run the controller with the provided
@@ -64,9 +64,14 @@ document.onreadystatechange = function() {
         setTimeout(function() {
             user.unset("name");
         }, 3000);
-        // stop listening to the "/^name.*/" path
+        // stop listening to the "name.*" path
         setTimeout(function() {
-            user.off(/^name\.*/g);
+            user.off(/^name\.*$/, function(path) {
+                console.log("No longer listening to", path);
+            });
+            // will only activate the controller but the the monitor.on
+            // as it was removed in the previous line
+            user.set("name.first", "Jenny");
         }, 4000);
         // will only trigger the controller
         setTimeout(function() {
@@ -95,7 +100,9 @@ document.onreadystatechange = function() {
         // update the first name...
         setTimeout(function() {
             // update props
-            settings.set("appearance.theme.dark", false);
+            settings.set("appearance.theme.dark", false, {
+                "someCondition": true
+            });
             settings.set("appearance.theme.light", true);
             // add a random prop
             settings.set("appearance.colors.main", "purple");
