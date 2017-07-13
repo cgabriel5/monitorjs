@@ -162,8 +162,8 @@
                     // cache the object
                     var _ = this,
                         object = _.object;
-                    // 1) remove start/ending slashes
-                    path = path.replace(/^\.|\.$/g, "");
+                    // 1) remove start/ending dots
+                    path = path.replace(/^\.+|\.+$/g, "");
                     // 2) break apart the path
                     var parts = path.split(".");
                     // 3) parse each path
@@ -212,7 +212,7 @@
                 },
                 /**
                  * @description [Sets the provided value at the provided path.]
-                 * @param  {String|RegExp} path [The path to use.]
+                 * @param  {String} path [The path to set.]
                  * @param  {Any} value          [The value to set.]
                  * @param  {Object} conditions  [Object containing possible conditions that can be used
                  *                               to determine whether to run any code.]
@@ -250,8 +250,8 @@
                     // update the cache
                     cache[path] = [date, type, value, conditions];
                     // ------------------------------------
-                    // 1) remove start/ending slashes
-                    path = path.replace(/^\.|\.$/g, "");
+                    // 1) remove start/ending dots
+                    path = path.replace(/^\.+|\.+$/g, "");
                     // 2) break apart the path
                     var parts = path.split(".");
                     // 3) parse each path
@@ -353,8 +353,8 @@
                         cache = _.cache,
                         conditions = conditions || {},
                         date = Date.now();
-                    // 1) remove start/ending slashes
-                    path = path.replace(/^\.|\.$/g, "");
+                    // 1) remove start/ending dots
+                    path = path.replace(/^\.+|\.+$/g, "");
                     // 2) break apart the path
                     var parts = path.split(".");
                     // 3) parse each path
@@ -422,7 +422,7 @@
                 },
                 /**
                  * @description [Triggers the controller. Using the provided path and value.]
-                 * @param  {String|RegExp} path  [The path to trigger.]
+                 * @param  {String} path  [The path to trigger.]
                  * @param  {Any} value           [The value to use.]
                  * @param  {Object} conditions   [Object containing possible conditions that can be used
                  *                                to determine whether to run any code.]
