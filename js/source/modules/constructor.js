@@ -203,13 +203,16 @@ var Library = class__({
         /**
          * @description [Unsets the last object of the provided path.]
          * @param  {String} path         [The path to unset from.]
+         * @param  {Object} conditions   [Object containing possible conditions that can be used
+         *                                to determine whether to run any code.]
          * @return {Undefined}           [Nothing is returned.]
          */
-        "unset": function(path) {
+        "unset": function(path, conditions) {
             // cache the object
             var _ = this,
                 object = _.object,
                 cache = _.cache,
+                conditions = conditions || {},
                 date = Date.now();
             // 1) remove start/ending slashes
             path = path.replace(/^\.|\.$/g, "");
@@ -258,7 +261,7 @@ var Library = class__({
             // remove the last property from the path
             delete old[prop];
             // the callback args
-            var args = [path, "delete", undefined, obj, date];
+            var args = [path, "delete", undefined, obj, date, conditions];
             // run the callback (controller) if provided
             if (_.controller) _.controller.apply(_, args);
             // run any callbacks that match the path
