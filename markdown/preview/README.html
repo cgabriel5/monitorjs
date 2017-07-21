@@ -14,10 +14,12 @@
     <article class="markdown-body"><h1 id="monitor-(monitorjs)">monitor (monitorjs)</h1>
 <p>Small library that monitors an object.</p>
 <h5 id="table-of-contents">Table of Contents</h5>
-<p><a href="#what-it-does">What It Does</a><br><a href="#add-to-project">Add To Project</a><br><a href="#access-library">Access Library</a><br><a href="#instance-creation">Instance Creation</a><br><a href="#api">API</a>   </p>
+<p><a href="#what-it-does">What It Does</a><br><a href="#add-to-project">Add To Project</a><br><a href="#access-library">Access Library</a><br><a href="#api">API</a>   </p>
 <ul class="list">
 <li><a href="#instance-api">Instance</a><ul class="list">
-<li><a href="#instance-quicktable-reference">QuickTable</a>  </li>
+<li><a href="#signature-api">Signature</a> </li>
+<li><a href="#instance-creation">Instance Creation</a>  </li>
+<li><a href="#instance-quicktable-methods-reference">QuickTable Methods</a>  </li>
 <li><a href="#instance-methods-long">Methods</a> </li>
 </ul>
 </li>
@@ -32,29 +34,26 @@
 <h3 id="add-to-project">Add To Project</h3>
 <pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/lib.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><p><a name="access-library"></a></p>
 <h3 id="access-library">Access Library</h3>
-<pre class="hljs"><code><span class="hljs-keyword">var</span> Monitor = <span class="hljs-built_in">window</span>.app.libs.Monitor;</code></pre><p><a name="instance-creation"></a></p>
+<pre class="hljs"><code><span class="hljs-keyword">var</span> Monitor = <span class="hljs-built_in">window</span>.app.libs.Monitor;</code></pre><p><a name="api"></a></p>
+<h2 id="api">API</h2>
+<p><a name="instance-api"></a></p>
+<p><a name="signature-api"></a></p>
+<h3 id="instance-signature">Instance Signature</h3>
+<pre class="hljs"><code><span class="hljs-comment">/**
+ * @param  {String: Optional} controller [Main function to handle all object changes.]
+ * @return {Object: Required} obj        [The object to monitor for changes.]
+ */</span></code></pre><p><a name="instance-creation"></a></p>
 <h3 id="instance-creation">Instance Creation</h3>
-<pre class="hljs"><code><span class="hljs-keyword">var</span> monitor = <span class="hljs-keyword">new</span> Monitor(controller, obj);
-<span class="hljs-comment">// p1: Optional Controller Function</span>
-<span class="hljs-comment">// p2: The object to monitor</span>
-
-<span class="hljs-comment">// Using the "new" keyword is not necessary. If not used</span>
-<span class="hljs-comment">// the library will make sure to use it for you.</span>
-<span class="hljs-keyword">var</span> monitor = Monitor(controller, obj);
-
-<span class="hljs-comment">// Note**: A controller is not necessary. Using listeners via on()</span>
-<span class="hljs-comment">// is perfectly fine.</span>
-
-<span class="hljs-comment">// this...</span>
+<p><strong>Note</strong>: Using the <code>new</code> keyword is not necessary. The library will make sure to use it for when when you don&#39;t. </p>
+<pre class="hljs"><code><span class="hljs-comment">// this...</span>
+<span class="hljs-keyword">var</span> monitor = <span class="hljs-keyword">new</span> Monitor(controller, obj);
+<span class="hljs-comment">// is the same as this</span>
+<span class="hljs-keyword">var</span> monitor = Monitor(controller, obj);</code></pre><p><strong>Note</strong>: A controller is not necessary. Using listeners via the <code>instance.on</code> method is perfectly fine.</p>
+<pre class="hljs"><code><span class="hljs-comment">// this...</span>
 <span class="hljs-keyword">var</span> monitor = <span class="hljs-keyword">new</span> Monitor(<span class="hljs-literal">null</span>, obj);
-<span class="hljs-comment">// or this...</span>
-<span class="hljs-keyword">var</span> monitor = Monitor(<span class="hljs-literal">null</span>, obj);
-<span class="hljs-comment">// work fine</span></code></pre><p><a name="api"></a></p>
-<h3 id="api">API</h3>
-<p> <a name="instance-api"></a></p>
-<h3 id="api-&mdash;-instance">API &mdash; Instance</h3>
-<p><a name="instance-quicktable-reference"></a></p>
-<h3 id="instance-quicktable-reference">Instance QuickTable Reference</h3>
+<span class="hljs-comment">// is the same as this</span>
+<span class="hljs-keyword">var</span> monitor = Monitor(<span class="hljs-literal">null</span>, obj);</code></pre><p><a name="instance-quicktable-methods-reference"></a></p>
+<h3 id="instance-quicktable-methods-reference">Instance QuickTable Methods Reference</h3>
 <table>
 <thead>
 <tr>
@@ -135,14 +134,13 @@ monitor.on(<span class="hljs-regexp">/^path1(?!.path4).*/</span>, <span class="h
 <span class="hljs-comment">// oldValue: The changes old value</span>
 <span class="hljs-comment">// time: The time the change occurred</span>
 <span class="hljs-comment">// conditions: Any passed in conditions</span></code></pre><p><strong>monitor.off</strong> &mdash; Removes the object path listener.</p>
-<pre class="hljs"><code><span class="hljs-comment">// Note**: When removing a listener the provide path </span>
-<span class="hljs-comment">// must be the same path that was used with the on() method.</span>
-monitor.off(<span class="hljs-string">"path1.path2"</span>);
+<p><strong>Note</strong>: When removing a listener the provide path must be the same path that was provided with the <code>instance.on</code> method.</p>
+<pre class="hljs"><code>monitor.off(<span class="hljs-string">"path1.path2"</span>);
 
 <span class="hljs-comment">// callback can be provided</span>
 monitor.off(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path</span>) </span>{
     <span class="hljs-comment">// logic...</span>
-});</code></pre><p><strong>monitor.clearCache</strong> &mdash; Clears the monitor&#39;s cache.</p>
+});</code></pre><p><strong>monitor.clearCache</strong> &mdash; Clears the <em>entire</em> monitor&#39;s cache.</p>
 <pre class="hljs"><code>monitor.clearCache();</code></pre><p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
 <p>For a better understanding check out <code>index.html</code> and <code>js/source/test.js</code>. <code>js/source/test.js</code> contains examples showing how the library is used.</p>

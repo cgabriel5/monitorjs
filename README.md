@@ -7,10 +7,11 @@ Small library that monitors an object.
 [What It Does](#what-it-does)  
 [Add To Project](#add-to-project)  
 [Access Library](#access-library)  
-[Instance Creation](#instance-creation)  
 [API](#api)   
 * [Instance](#instance-api)
-    * [QuickTable](#instance-quicktable-reference)  
+    * [Signature](#signature-api) 
+    * [Instance Creation](#instance-creation)  
+    * [QuickTable Methods](#instance-quicktable-methods-reference)  
     * [Methods](#instance-methods-long) 
 
 [Usage](#usage)  
@@ -37,36 +38,43 @@ Small library that monitors an object.
 var Monitor = window.app.libs.Monitor;
 ```
 
+<a name="api"></a>
+## API
+
+<a name="instance-api"></a>
+
+<a name="signature-api"></a>
+### Instance Signature
+
+```js
+/**
+ * @param  {String: Optional} controller [Main function to handle all object changes.]
+ * @return {Object: Required} obj        [The object to monitor for changes.]
+ */
+```
+
 <a name="instance-creation"></a>
 ### Instance Creation
 
+**Note**: Using the `new` keyword is not necessary. The library will make sure to use it for when when you don't. 
+
 ```js
+// this...
 var monitor = new Monitor(controller, obj);
-// p1: Optional Controller Function
-// p2: The object to monitor
-
-// Using the "new" keyword is not necessary. If not used
-// the library will make sure to use it for you.
+// is the same as this
 var monitor = Monitor(controller, obj);
+```
+**Note**: A controller is not necessary. Using listeners via the `instance.on` method is perfectly fine.
 
-// Note**: A controller is not necessary. Using listeners via on()
-// is perfectly fine.
-
+```js
 // this...
 var monitor = new Monitor(null, obj);
-// or this...
+// is the same as this
 var monitor = Monitor(null, obj);
-// work fine
 ```
 
-<a name="api"></a>
-### API
- 
- <a name="instance-api"></a>
-### API &mdash; Instance
-
-<a name="instance-quicktable-reference"></a>
-### Instance QuickTable Reference
+<a name="instance-quicktable-methods-reference"></a>
+### Instance QuickTable Methods Reference
 
 Method | Function
 ------------ | -------------
@@ -147,9 +155,9 @@ monitor.on(/^path1(?!.path4).*/, function(filter, path, type, newValue, oldValue
 
 **monitor.off** &mdash; Removes the object path listener.
 
+**Note**: When removing a listener the provide path must be the same path that was provided with the `instance.on` method.
+
 ```js
-// Note**: When removing a listener the provide path 
-// must be the same path that was used with the on() method.
 monitor.off("path1.path2");
 
 // callback can be provided
@@ -158,7 +166,7 @@ monitor.off("path1.path2", function(path) {
 });
 ```
 
-**monitor.clearCache** &mdash; Clears the monitor's cache.
+**monitor.clearCache** &mdash; Clears the *entire* monitor's cache.
 
 ```js
 monitor.clearCache();
