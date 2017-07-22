@@ -14,7 +14,7 @@
     <article class="markdown-body"><h1 id="monitor-(monitorjs)">monitor (monitorjs)</h1>
 <p>Small library that monitors an object.</p>
 <h5 id="table-of-contents">Table of Contents</h5>
-<p><a href="#what-it-does">What It Does</a><br><a href="#add-to-project">Add To Project</a><br><a href="#access-library">Access Library</a><br><a href="#api">API</a>   </p>
+<p><a href="#run-project">How to Run Project</a><br><a href="#what-it-does">What It Does</a><br><a href="#add-to-project">Add To Project</a><br><a href="#access-library">Access Library</a><br><a href="#api">API</a>  </p>
 <ul class="list">
 <li><a href="#instance-api">Instance</a><ul class="list">
 <li><a href="#signature-api">Signature</a> </li>
@@ -24,7 +24,15 @@
 </ul>
 </li>
 </ul>
-<p><a href="#usage">Usage</a><br><a href="#contributing">Contributing</a><br><a href="#todo">TODO</a><br><a href="#license">License</a>  </p>
+<p><a href="#usage">Usage</a>  </p>
+<ul class="list">
+<li><a href="#usage-example-1">Example 1</a></li>
+<li><a href="#usage-example-2">Example 2</a></li>
+</ul>
+<p><a href="#contributing">Contributing</a><br><a href="#todo">TODO</a><br><a href="#license">License</a>  </p>
+<p><a name="run-project"></a></p>
+<h3 id="how-to-run-project">How to Run Project</h3>
+<p>This project uses the following <a href="https://github.com/cgabriel5/snippets/tree/master/boilerplate/application">boilerplate</a>. The Gulp commands can be found <a href="https://github.com/cgabriel5/snippets/blob/master/boilerplate/application/README.md#-using-gulp">here</a>.</p>
 <p><a name="what-it-does"></a></p>
 <h3 id="what-it-does">What It Does</h3>
 <ul class="list">
@@ -99,7 +107,26 @@
 <pre class="hljs"><code><span class="hljs-comment">// set the "path1.path2" to 12</span>
 monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>);</code></pre><p><strong>Note</strong>: A <code>conditions</code> object should be used when trying to modify the object via the <code>set</code> and <code>trigger</code> methods from within the <code>controller</code> or attached path listeners using the <code>on</code> method. The conditions object serves to hold flags which, depending on your codes logic, allow for certain object modifications to run. For example, when you pass in a certain flag inside the <code>conditions</code> object you can have the code return.</p>
 <pre class="hljs"><code><span class="hljs-comment">// set the "path1.path2" to 12 + add a conditions object</span>
-monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>, {<span class="hljs-string">"someCondition"</span>: <span class="hljs-literal">true</span>});</code></pre><p><strong>monitor.unset</strong> &mdash; Removes the last property of the provided path.</p>
+monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>, {<span class="hljs-string">"someCondition"</span>: <span class="hljs-literal">true</span>});</code></pre><p><strong>Note</strong>: Paths that lead to <code>arrays</code> can also be modified.</p>
+<pre class="hljs"><code><span class="hljs-comment">// example monitor object + structure</span>
+<span class="hljs-keyword">var</span> settings = <span class="hljs-keyword">new</span> Monitor(<span class="hljs-literal">null</span>, {
+    <span class="hljs-string">"appearance"</span>: {
+        <span class="hljs-string">"theme"</span>: {
+            <span class="hljs-string">"dark"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-string">"light"</span>: <span class="hljs-literal">false</span>
+        },
+        <span class="hljs-string">"colors"</span>: {}
+    },
+    <span class="hljs-string">"search"</span>: {
+        <span class="hljs-string">"autocomplete"</span>: <span class="hljs-literal">true</span>
+    },
+    <span class="hljs-string">"accountActive"</span>: <span class="hljs-literal">true</span>
+});
+
+<span class="hljs-comment">// add an "rgb" property array to the "appearance.colors" object</span>
+settings.set(<span class="hljs-string">"appearance.colors.rgb"</span>, [<span class="hljs-number">120</span>, <span class="hljs-number">0</span>, <span class="hljs-number">128</span>]);
+<span class="hljs-comment">// update the "appearance.colors.rgb" arrays first item</span>
+settings.set(<span class="hljs-string">"appearance.colors.rgb[0]"</span>, <span class="hljs-number">128</span>);</code></pre><p><strong>monitor.unset</strong> &mdash; Removes the last property of the provided path.</p>
 <pre class="hljs"><code>monitor.unset(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><strong>monitor.trigger</strong> &mdash; Triggers the provided path.</p>
 <pre class="hljs"><code><span class="hljs-comment">// trigger the "path1.path2"</span>
 monitor.trigger(<span class="hljs-string">"path1.path2"</span>);
@@ -119,15 +146,15 @@ monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-li
 <tbody>
 <tr>
 <td><strong>filter</strong></td>
-<td>The provided path&#39;s RegExp.toString string.</td>
+<td>The provided path&#39;s <code>RegExp.toString</code> string.</td>
 </tr>
 <tr>
 <td><strong>path</strong></td>
-<td>The path being activated.</td>
+<td>The path the change occurred on.</td>
 </tr>
 <tr>
 <td><strong>type</strong></td>
-<td>The type of change (<code>add</code>/<code>delete</code>/<code>update</code>).</td>
+<td>The type of change (<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>).</td>
 </tr>
 <tr>
 <td><strong>newValue</strong></td>
@@ -143,25 +170,22 @@ monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-li
 </tr>
 <tr>
 <td><strong>conditions</strong></td>
-<td>Any passed conditions.</td>
+<td>The conditions object.</td>
 </tr>
 </tbody>
 </table>
-<pre class="hljs"><code><span class="hljs-comment">// listen to the path "path1.*"</span>
-monitor.on(<span class="hljs-regexp">/^path1.\.*/g</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">filter, path, type, newValue, oldValue, time, conditions</span>) </span>{
+<pre class="hljs"><code><span class="hljs-comment">// example handler function</span>
+<span class="hljs-keyword">var</span> handler = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">filter, path, type, newValue, oldValue, time, conditions</span>) </span>{
     <span class="hljs-comment">// logic...</span>
-});
+};
 
-<span class="hljs-comment">// use a string to listen to the "path1.path2" path</span>
-<span class="hljs-comment">// Note**: String paths get convert to RegExp objects.</span>
-monitor.on(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">filter, path, type, newValue, oldValue, time, conditions</span>) </span>{
-    <span class="hljs-comment">// logic</span>
-});
+<span class="hljs-comment">// listen to the path "path1.*"</span>
+monitor.on(<span class="hljs-regexp">/^path1.\.*/g</span>, handler);</code></pre><p><strong>Note</strong>: <code>String</code> paths internally get escaped and converted to an <code>RegExp</code> object.</p>
+<pre class="hljs"><code><span class="hljs-comment">// use a string to listen to the "path1.path2" path</span>
+monitor.on(<span class="hljs-string">"path1.path2"</span>, handler1);
 
 <span class="hljs-comment">// listen to th paths "path1.*" except "path1.path4"</span>
-monitor.on(<span class="hljs-regexp">/^path1(?!.path4).*/</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">filter, path, type, newValue, oldValue, time, conditions</span>) </span>{
-    <span class="hljs-comment">// logic</span>
-});</code></pre><p><strong>monitor.off</strong> &mdash; Removes the object path listener.</p>
+monitor.on(<span class="hljs-regexp">/^path1(?!.path4).*/</span>, handler3);</code></pre><p><strong>monitor.off</strong> &mdash; Removes the object path listener.</p>
 <p><strong>Note</strong>: When removing a listener the provide path must be the same path that was provided with the <code>instance.on</code> method.</p>
 <pre class="hljs"><code>monitor.off(<span class="hljs-string">"path1.path2"</span>);
 
@@ -169,10 +193,125 @@ monitor.on(<span class="hljs-regexp">/^path1(?!.path4).*/</span>, <span class="h
 monitor.off(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path</span>) </span>{
     <span class="hljs-comment">// logic...</span>
 });</code></pre><p><strong>monitor.clearCache</strong> &mdash; Clears the <em>entire</em> monitor&#39;s cache.</p>
+<p><strong>Note</strong>: An internal cache is used to store and retrieve the previous path values. Sometimes it might be needed to clear it out.</p>
 <pre class="hljs"><code>monitor.clearCache();</code></pre><p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
-<p>For a better understanding check out <code>index.html</code> and <code>js/source/test.js</code>. <code>js/source/test.js</code> contains examples showing how the library is used.</p>
-<p><a name="contributing"></a></p>
+<p><strong>Note</strong>: For a better understanding and to see the following examples in action, check out <code>index.html</code> and <code>js/source/test.js</code>. <code>js/source/test.js</code> contains the following examples.</p>
+<p><a name="usage-example-1"></a></p>
+<h3 id="example-1">Example 1</h3>
+<pre class="hljs"><code><span class="hljs-comment">// element where the name will get updated</span>
+<span class="hljs-keyword">var</span> $name = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"name"</span>);
+
+<span class="hljs-comment">// create the object to monitor</span>
+<span class="hljs-keyword">var</span> obj = {
+    <span class="hljs-string">"id"</span>: <span class="hljs-number">961739264</span>,
+    <span class="hljs-string">"name"</span>: {
+        <span class="hljs-string">"first"</span>: <span class="hljs-string">"John"</span>,
+        <span class="hljs-string">"last"</span>: <span class="hljs-string">"Doe"</span>,
+    },
+    <span class="hljs-string">"dbay"</span>: {
+        <span class="hljs-string">"day"</span>: <span class="hljs-number">3</span>,
+        <span class="hljs-string">"month"</span>: <span class="hljs-number">10</span>,
+        <span class="hljs-string">"year"</span>: <span class="hljs-number">92</span>
+    }
+};
+
+<span class="hljs-comment">// controller function to handle object changes</span>
+<span class="hljs-keyword">var</span> controller = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path, type, newValue, oldValue, time, conditions</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"controller[user]--&gt;"</span>, path, type, newValue, oldValue, time, conditions);
+    <span class="hljs-comment">// do something when the name.* path gets altered</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/^name/</span>.test(path)) {
+        <span class="hljs-keyword">if</span> (type !== <span class="hljs-string">"delete"</span>) { <span class="hljs-comment">// add/update/trigger</span>
+            <span class="hljs-comment">// get the name object to get the first/last name</span>
+            <span class="hljs-keyword">var</span> name = <span class="hljs-keyword">this</span>.get(<span class="hljs-string">"name"</span>)
+                .val,
+                first_name = name.first,
+                last_name = name.last;
+            <span class="hljs-comment">// update the full name on the user's screen</span>
+            $name.textContent = (first_name + <span class="hljs-string">" "</span> + last_name);
+            <span class="hljs-comment">// set the message</span>
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (type === <span class="hljs-string">"delete"</span>) {
+            <span class="hljs-comment">// when the name.* gets unset (deleted/removed/plucked)</span>
+            $name.textContent = <span class="hljs-string">""</span>;
+        }
+    }
+};
+
+<span class="hljs-comment">// create new monitor</span>
+<span class="hljs-keyword">var</span> user = <span class="hljs-keyword">new</span> Monitor(controller, obj);
+
+<span class="hljs-comment">// start listening to the "name.*" path</span>
+user.on(<span class="hljs-regexp">/^name\.*$/</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">filter, path, type, newValue, oldValue, time, conditions</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"objectOn[user]----&gt;"</span>, filter, path, type, newValue, oldValue, time, conditions);
+});
+
+<span class="hljs-comment">// trigger the name path. this will run the controller with the provided</span>
+<span class="hljs-comment">// path and value provided</span>
+setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    user.trigger(<span class="hljs-string">"name"</span>);
+}, <span class="hljs-number">1000</span>);
+
+<span class="hljs-comment">// update the first name...</span>
+setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    user.set(<span class="hljs-string">"name.first"</span>, <span class="hljs-string">"Jane"</span>);
+}, <span class="hljs-number">2000</span>);
+
+<span class="hljs-comment">// remove the name path from the object</span>
+setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    user.unset(<span class="hljs-string">"name"</span>);
+}, <span class="hljs-number">3000</span>);
+
+<span class="hljs-comment">// stop listening to the "name.*" path</span>
+setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    user.off(<span class="hljs-regexp">/^name\.*$/</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path</span>) </span>{
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"No longer listening to"</span>, path);
+    });
+    <span class="hljs-comment">// will only activate the controller but the the monitor.on</span>
+    <span class="hljs-comment">// as it was removed in the previous line</span>
+    user.set(<span class="hljs-string">"name.first"</span>, <span class="hljs-string">"Jenny"</span>);
+}, <span class="hljs-number">4000</span>);
+
+<span class="hljs-comment">// will only trigger the controller</span>
+setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    user.set(<span class="hljs-string">"age"</span>, <span class="hljs-number">20</span>);
+}, <span class="hljs-number">5000</span>);</code></pre><p><a name="usage-example-2"></a></p>
+<h3 id="example-2">Example 2</h3>
+<pre class="hljs"><code><span class="hljs-comment">// controller function to handle object changes</span>
+<span class="hljs-keyword">var</span> controller = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path, type, newValue, oldValue, time, conditions</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"controller[settings]--&gt;"</span>, path, type, newValue, oldValue, time, conditions);
+};
+
+<span class="hljs-comment">// create the object to monitor</span>
+<span class="hljs-keyword">var</span> settings = <span class="hljs-keyword">new</span> Monitor(controller, {
+    <span class="hljs-string">"appearance"</span>: {
+        <span class="hljs-string">"theme"</span>: {
+            <span class="hljs-string">"dark"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-string">"light"</span>: <span class="hljs-literal">false</span>
+        },
+        <span class="hljs-string">"colors"</span>: {}
+    },
+    <span class="hljs-string">"search"</span>: {
+        <span class="hljs-string">"autocomplete"</span>: <span class="hljs-literal">true</span>
+    },
+    <span class="hljs-string">"accountActive"</span>: <span class="hljs-literal">true</span>
+});
+
+<span class="hljs-comment">// update the first name...</span>
+setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-comment">// update props</span>
+    settings.set(<span class="hljs-string">"appearance.theme.dark"</span>, <span class="hljs-literal">false</span>, {
+        <span class="hljs-string">"someCondition"</span>: <span class="hljs-literal">true</span>
+    });
+    settings.set(<span class="hljs-string">"appearance.theme.light"</span>, <span class="hljs-literal">true</span>);
+    <span class="hljs-comment">// add a random prop</span>
+    settings.set(<span class="hljs-string">"appearance.colors.main"</span>, <span class="hljs-string">"purple"</span>);
+    settings.set(<span class="hljs-string">"appearance.colors.rgb"</span>, [<span class="hljs-number">120</span>, <span class="hljs-number">0</span>, <span class="hljs-number">128</span>]);
+}, <span class="hljs-number">7000</span>);
+
+<span class="hljs-comment">// update the an rgb value</span>
+setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    settings.set(<span class="hljs-string">"appearance.colors.rgb[0]"</span>, <span class="hljs-number">128</span>);
+}, <span class="hljs-number">8000</span>);</code></pre><p><a name="contributing"></a></p>
 <h3 id="contributing">Contributing</h3>
 <p>Contributions are welcome! Found a bug, feel like documentation is lacking/confusing and needs an update, have performance/feature suggestions or simply found a typo? Let me know! :)</p>
 <p>See how to contribute <a href="https://github.com/cgabriel5/monitorjs/blob/master/CONTRIBUTING.md">here</a>.</p>
