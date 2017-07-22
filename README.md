@@ -12,6 +12,7 @@ Small library that monitors an object.
 * [Instance](#instance-api)
     * [Signature](#signature-api) 
     * [Instance Creation](#instance-creation)  
+    * [Controller](#instance-controller)  
     * [QuickTable Methods](#instance-quicktable-methods-reference)  
     * [Methods](#instance-methods-long) 
 
@@ -82,18 +83,39 @@ var monitor = new Monitor(null, obj);
 var monitor = Monitor(null, obj);
 ```
 
+<a name="instance-controller"></a>
+### Controller
+
+A `controller` is the brain of the monitor and is simply a handler. It is *optional* but when it's provided all changes performed to the monitor can be acted upon. When a `controller` is not used changes can be listened to by attaching path listeners via the `instance.on` method. Both `controllers` and path listeners can be used if so desired.
+
+```js
+// controller function to handle object changes
+var controller = function(path, type, newValue, oldValue, time, conditions) {
+    // logic...
+};
+```
+
+Parameter | Description
+------------ | -------------
+`path` | The path the change occurred on.
+`type` | The type of change (`add`, `delete`, `update`, `trigger`).
+`newValue` | The changes new value.
+`oldValue` | The changes old value.
+`time` | A timestamp of when the change occurred.
+`conditions` | The conditions object.
+
 <a name="instance-quicktable-methods-reference"></a>
 ### Instance QuickTable Methods Reference
 
 Method | Function
 ------------ | -------------
-**get** | Gets the value at the provided object path.
-**set** | Sets the provided value at the provided path.
-**unset** | Removes the last property of the provided path.
-**trigger** | Triggers the provided path.
-**on** | Adds a object path listener.
-**off** | Removes the object path listener.
-**clearCache** | Clears the entire monitor's cache.
+`get` | Gets the value at the provided object path.
+`set` | Sets the provided value at the provided path.
+`unset` | Removes the last property of the provided path.
+`trigger` | Triggers the provided path.
+`on` | Adds a object path listener.
+`off` | Removes the object path listener.
+`clearCache` | Clears the entire monitor's cache.
 
 <a name="instance-methods-long"></a>
 ### Instance Methods
@@ -166,13 +188,13 @@ monitor.set("path1.path2", undefined, {"someCondition": true});
 
 Parameter | Description
 ------------ | -------------
-**filter** | The provided path's `RegExp.toString` string.
-**path** | The path the change occurred on.
-**type** | The type of change (`add`, `delete`, `update`, `trigger`).
-**newValue** | The changes new value.
-**oldValue** | The changes old value.
-**time** | A timestamp of when the change occurred.
-**conditions** | The conditions object.
+`filter` | The provided path's `RegExp.toString` string.
+`path` | The path the change occurred on.
+`type` | The type of change (`add`, `delete`, `update`, `trigger`).
+`newValue` | The changes new value.
+`oldValue` | The changes old value.
+`time` | A timestamp of when the change occurred.
+`conditions` | The conditions object.
 
 ```js
 // example handler function
@@ -220,7 +242,7 @@ monitor.clearCache();
 **Note**: For a better understanding and to see the following examples in action, check out `index.html` and `js/source/test.js`. `js/source/test.js` contains the following examples.
 
 <a name="usage-example-1"></a>
-### Example 1
+**Example 1** &mdash; Monitor an object with controller logic.
 
 ```js
 // element where the name will get updated
@@ -302,7 +324,7 @@ setTimeout(function() {
 ```
 
 <a name="usage-example-2"></a>
-### Example 2
+**Example 2** &mdash; Monitor object with array modification.
 
 ```js
 // controller function to handle object changes

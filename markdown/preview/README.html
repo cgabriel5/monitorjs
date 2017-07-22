@@ -19,6 +19,7 @@
 <li><a href="#instance-api">Instance</a><ul class="list">
 <li><a href="#signature-api">Signature</a> </li>
 <li><a href="#instance-creation">Instance Creation</a>  </li>
+<li><a href="#instance-controller">Controller</a>  </li>
 <li><a href="#instance-quicktable-methods-reference">QuickTable Methods</a>  </li>
 <li><a href="#instance-methods-long">Methods</a> </li>
 </ul>
@@ -60,7 +61,47 @@
 <pre class="hljs"><code><span class="hljs-comment">// this...</span>
 <span class="hljs-keyword">var</span> monitor = <span class="hljs-keyword">new</span> Monitor(<span class="hljs-literal">null</span>, obj);
 <span class="hljs-comment">// is the same as this</span>
-<span class="hljs-keyword">var</span> monitor = Monitor(<span class="hljs-literal">null</span>, obj);</code></pre><p><a name="instance-quicktable-methods-reference"></a></p>
+<span class="hljs-keyword">var</span> monitor = Monitor(<span class="hljs-literal">null</span>, obj);</code></pre><p><a name="instance-controller"></a></p>
+<h3 id="controller">Controller</h3>
+<p>A <code>controller</code> is the brain of the monitor and is simply a handler. It is <em>optional</em> but when it&#39;s provided all changes performed to the monitor can be acted upon. When a <code>controller</code> is not used changes can be listened to by attaching path listeners via the <code>instance.on</code> method. Both <code>controllers</code> and path listeners can be used if so desired.</p>
+<pre class="hljs"><code><span class="hljs-comment">// controller function to handle object changes</span>
+<span class="hljs-keyword">var</span> controller = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path, type, newValue, oldValue, time, conditions</span>) </span>{
+    <span class="hljs-comment">// logic...</span>
+};</code></pre><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td>The path the change occurred on.</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>The type of change (<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>).</td>
+</tr>
+<tr>
+<td><code>newValue</code></td>
+<td>The changes new value.</td>
+</tr>
+<tr>
+<td><code>oldValue</code></td>
+<td>The changes old value.</td>
+</tr>
+<tr>
+<td><code>time</code></td>
+<td>A timestamp of when the change occurred.</td>
+</tr>
+<tr>
+<td><code>conditions</code></td>
+<td>The conditions object.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="instance-quicktable-methods-reference"></a></p>
 <h3 id="instance-quicktable-methods-reference">Instance QuickTable Methods Reference</h3>
 <table>
 <thead>
@@ -71,31 +112,31 @@
 </thead>
 <tbody>
 <tr>
-<td><strong>get</strong></td>
+<td><code>get</code></td>
 <td>Gets the value at the provided object path.</td>
 </tr>
 <tr>
-<td><strong>set</strong></td>
+<td><code>set</code></td>
 <td>Sets the provided value at the provided path.</td>
 </tr>
 <tr>
-<td><strong>unset</strong></td>
+<td><code>unset</code></td>
 <td>Removes the last property of the provided path.</td>
 </tr>
 <tr>
-<td><strong>trigger</strong></td>
+<td><code>trigger</code></td>
 <td>Triggers the provided path.</td>
 </tr>
 <tr>
-<td><strong>on</strong></td>
+<td><code>on</code></td>
 <td>Adds a object path listener.</td>
 </tr>
 <tr>
-<td><strong>off</strong></td>
+<td><code>off</code></td>
 <td>Removes the object path listener.</td>
 </tr>
 <tr>
-<td><strong>clearCache</strong></td>
+<td><code>clearCache</code></td>
 <td>Clears the entire monitor&#39;s cache.</td>
 </tr>
 </tbody>
@@ -145,31 +186,31 @@ monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-li
 </thead>
 <tbody>
 <tr>
-<td><strong>filter</strong></td>
+<td><code>filter</code></td>
 <td>The provided path&#39;s <code>RegExp.toString</code> string.</td>
 </tr>
 <tr>
-<td><strong>path</strong></td>
+<td><code>path</code></td>
 <td>The path the change occurred on.</td>
 </tr>
 <tr>
-<td><strong>type</strong></td>
+<td><code>type</code></td>
 <td>The type of change (<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>).</td>
 </tr>
 <tr>
-<td><strong>newValue</strong></td>
+<td><code>newValue</code></td>
 <td>The changes new value.</td>
 </tr>
 <tr>
-<td><strong>oldValue</strong></td>
+<td><code>oldValue</code></td>
 <td>The changes old value.</td>
 </tr>
 <tr>
-<td><strong>time</strong></td>
+<td><code>time</code></td>
 <td>A timestamp of when the change occurred.</td>
 </tr>
 <tr>
-<td><strong>conditions</strong></td>
+<td><code>conditions</code></td>
 <td>The conditions object.</td>
 </tr>
 </tbody>
@@ -197,8 +238,8 @@ monitor.off(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-fu
 <pre class="hljs"><code>monitor.clearCache();</code></pre><p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
 <p><strong>Note</strong>: For a better understanding and to see the following examples in action, check out <code>index.html</code> and <code>js/source/test.js</code>. <code>js/source/test.js</code> contains the following examples.</p>
-<p><a name="usage-example-1"></a></p>
-<h3 id="example-1">Example 1</h3>
+<p><a name="usage-example-1"></a>
+<strong>Example 1</strong> &mdash; Monitor an object with controller logic.</p>
 <pre class="hljs"><code><span class="hljs-comment">// element where the name will get updated</span>
 <span class="hljs-keyword">var</span> $name = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"name"</span>);
 
@@ -274,8 +315,8 @@ setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span
 <span class="hljs-comment">// will only trigger the controller</span>
 setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
     user.set(<span class="hljs-string">"age"</span>, <span class="hljs-number">20</span>);
-}, <span class="hljs-number">5000</span>);</code></pre><p><a name="usage-example-2"></a></p>
-<h3 id="example-2">Example 2</h3>
+}, <span class="hljs-number">5000</span>);</code></pre><p><a name="usage-example-2"></a>
+<strong>Example 2</strong> &mdash; Monitor object with array modification.</p>
 <pre class="hljs"><code><span class="hljs-comment">// controller function to handle object changes</span>
 <span class="hljs-keyword">var</span> controller = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path, type, newValue, oldValue, time, conditions</span>) </span>{
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"controller[settings]--&gt;"</span>, path, type, newValue, oldValue, time, conditions);
