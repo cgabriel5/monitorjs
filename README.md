@@ -78,13 +78,13 @@ var monitor = Monitor(null, obj);
 
 Method | Function
 ------------ | -------------
-**get** | Gets the value at the provided object path
-**set** | Sets the provided value at the provided path
-**unset** | Removes the last property of the provided path
-**trigger** | Triggers the provided path
-**on** | Adds a object path listener
-**off** | Removes the object path listener
-**clearCache** | Clears the monitor's cache
+**get** | Gets the value at the provided object path.
+**set** | Sets the provided value at the provided path.
+**unset** | Removes the last property of the provided path.
+**trigger** | Triggers the provided path.
+**on** | Adds a object path listener.
+**off** | Removes the object path listener.
+**clearCache** | Clears the entire monitor's cache.
 
 <a name="instance-methods-long"></a>
 ### Instance Methods
@@ -100,7 +100,12 @@ monitor.get("path1.path2");
 ```js
 // set the "path1.path2" to 12
 monitor.set("path1.path2", 12);
+```
 
+**Note**: A `conditions` object should be used when trying to modify the object via the `set` and `trigger` methods from within the `controller` or attached path listeners using the `on` method. The conditions object serves to hold flags which, depending on your codes logic, allow for certain object modifications to run. For example, when you pass in a certain flag inside the `conditions` object you can have the code return.
+
+
+```js
 // set the "path1.path2" to 12 + add a conditions object
 monitor.set("path1.path2", 12, {"someCondition": true});
 ```
@@ -126,6 +131,16 @@ monitor.set("path1.path2", undefined, {"someCondition": true});
 
 **monitor.on** &mdash; Adds an object path listener.
 
+Parameter | Description
+------------ | -------------
+**filter** | The provided path's RegExp.toString string.
+**path** | The path being activated.
+**type** | The type of change (`add`/`delete`/`update`).
+**newValue** | The changes new value.
+**oldValue** | The changes old value.
+**time** | A timestamp of when the change occurred.
+**conditions** | Any passed conditions.
+
 ```js
 // listen to the path "path1.*"
 monitor.on(/^path1.\.*/g, function(filter, path, type, newValue, oldValue, time, conditions) {
@@ -142,15 +157,6 @@ monitor.on("path1.path2", function(filter, path, type, newValue, oldValue, time,
 monitor.on(/^path1(?!.path4).*/, function(filter, path, type, newValue, oldValue, time, conditions) {
     // logic
 });
-
-// parameters
-// filter: The provided paths RegExp.toString string
-// path: The path being activated
-// type: The type of change (add/delete/update)
-// newValue: The changes new value
-// oldValue: The changes old value
-// time: The time the change occurred
-// conditions: Any passed in conditions
 ```
 
 **monitor.off** &mdash; Removes the object path listener.

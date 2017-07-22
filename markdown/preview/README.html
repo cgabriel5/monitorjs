@@ -64,31 +64,31 @@
 <tbody>
 <tr>
 <td><strong>get</strong></td>
-<td>Gets the value at the provided object path</td>
+<td>Gets the value at the provided object path.</td>
 </tr>
 <tr>
 <td><strong>set</strong></td>
-<td>Sets the provided value at the provided path</td>
+<td>Sets the provided value at the provided path.</td>
 </tr>
 <tr>
 <td><strong>unset</strong></td>
-<td>Removes the last property of the provided path</td>
+<td>Removes the last property of the provided path.</td>
 </tr>
 <tr>
 <td><strong>trigger</strong></td>
-<td>Triggers the provided path</td>
+<td>Triggers the provided path.</td>
 </tr>
 <tr>
 <td><strong>on</strong></td>
-<td>Adds a object path listener</td>
+<td>Adds a object path listener.</td>
 </tr>
 <tr>
 <td><strong>off</strong></td>
-<td>Removes the object path listener</td>
+<td>Removes the object path listener.</td>
 </tr>
 <tr>
 <td><strong>clearCache</strong></td>
-<td>Clears the monitor&#39;s cache</td>
+<td>Clears the entire monitor&#39;s cache.</td>
 </tr>
 </tbody>
 </table>
@@ -97,9 +97,8 @@
 <p><strong>monitor.get</strong> &mdash; Gets the value at the provided object path.</p>
 <pre class="hljs"><code>monitor.get(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><strong>monitor.set</strong> &mdash; Sets the provided value at the provided path.</p>
 <pre class="hljs"><code><span class="hljs-comment">// set the "path1.path2" to 12</span>
-monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>);
-
-<span class="hljs-comment">// set the "path1.path2" to 12 + add a conditions object</span>
+monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>);</code></pre><p><strong>Note</strong>: A <code>conditions</code> object should be used when trying to modify the object via the <code>set</code> and <code>trigger</code> methods from within the <code>controller</code> or attached path listeners using the <code>on</code> method. The conditions object serves to hold flags which, depending on your codes logic, allow for certain object modifications to run. For example, when you pass in a certain flag inside the <code>conditions</code> object you can have the code return.</p>
+<pre class="hljs"><code><span class="hljs-comment">// set the "path1.path2" to 12 + add a conditions object</span>
 monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>, {<span class="hljs-string">"someCondition"</span>: <span class="hljs-literal">true</span>});</code></pre><p><strong>monitor.unset</strong> &mdash; Removes the last property of the provided path.</p>
 <pre class="hljs"><code>monitor.unset(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><strong>monitor.trigger</strong> &mdash; Triggers the provided path.</p>
 <pre class="hljs"><code><span class="hljs-comment">// trigger the "path1.path2"</span>
@@ -110,6 +109,44 @@ monitor.trigger(<span class="hljs-string">"path1.path2"</span>, <span class="hlj
 
 <span class="hljs-comment">// trigger the "path1.path2" + give an empty value + add a conditions object</span>
 monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-literal">undefined</span>, {<span class="hljs-string">"someCondition"</span>: <span class="hljs-literal">true</span>});</code></pre><p><strong>monitor.on</strong> &mdash; Adds an object path listener.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>filter</strong></td>
+<td>The provided path&#39;s RegExp.toString string.</td>
+</tr>
+<tr>
+<td><strong>path</strong></td>
+<td>The path being activated.</td>
+</tr>
+<tr>
+<td><strong>type</strong></td>
+<td>The type of change (<code>add</code>/<code>delete</code>/<code>update</code>).</td>
+</tr>
+<tr>
+<td><strong>newValue</strong></td>
+<td>The changes new value.</td>
+</tr>
+<tr>
+<td><strong>oldValue</strong></td>
+<td>The changes old value.</td>
+</tr>
+<tr>
+<td><strong>time</strong></td>
+<td>A timestamp of when the change occurred.</td>
+</tr>
+<tr>
+<td><strong>conditions</strong></td>
+<td>Any passed conditions.</td>
+</tr>
+</tbody>
+</table>
 <pre class="hljs"><code><span class="hljs-comment">// listen to the path "path1.*"</span>
 monitor.on(<span class="hljs-regexp">/^path1.\.*/g</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">filter, path, type, newValue, oldValue, time, conditions</span>) </span>{
     <span class="hljs-comment">// logic...</span>
@@ -124,16 +161,7 @@ monitor.on(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-fun
 <span class="hljs-comment">// listen to th paths "path1.*" except "path1.path4"</span>
 monitor.on(<span class="hljs-regexp">/^path1(?!.path4).*/</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">filter, path, type, newValue, oldValue, time, conditions</span>) </span>{
     <span class="hljs-comment">// logic</span>
-});
-
-<span class="hljs-comment">// parameters</span>
-<span class="hljs-comment">// filter: The provided paths RegExp.toString string</span>
-<span class="hljs-comment">// path: The path being activated</span>
-<span class="hljs-comment">// type: The type of change (add/delete/update)</span>
-<span class="hljs-comment">// newValue: The changes new value</span>
-<span class="hljs-comment">// oldValue: The changes old value</span>
-<span class="hljs-comment">// time: The time the change occurred</span>
-<span class="hljs-comment">// conditions: Any passed in conditions</span></code></pre><p><strong>monitor.off</strong> &mdash; Removes the object path listener.</p>
+});</code></pre><p><strong>monitor.off</strong> &mdash; Removes the object path listener.</p>
 <p><strong>Note</strong>: When removing a listener the provide path must be the same path that was provided with the <code>instance.on</code> method.</p>
 <pre class="hljs"><code>monitor.off(<span class="hljs-string">"path1.path2"</span>);
 
