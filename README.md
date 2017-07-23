@@ -378,7 +378,7 @@ See how to contribute [here](https://github.com/cgabriel5/monitorjs/blob/master/
 - [ ] Implement listener namespaces for `instance.on` method.
 - [ ] Expand cache clearing functionality (i.e. clear only specific path caches).
 - [ ] Add a way to filter the change types ([`add`, `delete`, `update`, `trigger`]) to act on.
-- [ ] Add `observe`, `pause`, and `disconnect` instance methods for better  and usability.
+- [ ] Add `observe`, `pause`, and `disconnect` instance methods for better functionality and usability.
 
 <a name="license"></a>
 ### License
