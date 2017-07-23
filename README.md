@@ -209,7 +209,7 @@ monitor.on(/^path1.\.*/g, handler);
 **Note**: `String` paths internally get escaped and converted to an `RegExp` object.
 ```js
 // use a string to listen to the "path1.path2" path
-monitor.on("path1.path2", handler1);
+monitor.on("path1.path2", handler2);
 
 // listen to th paths "path1.*" except "path1.path4"
 monitor.on(/^path1(?!.path4).*/, handler3);

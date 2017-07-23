@@ -223,7 +223,7 @@ monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-li
 <span class="hljs-comment">// listen to the path "path1.*"</span>
 monitor.on(<span class="hljs-regexp">/^path1.\.*/g</span>, handler);</code></pre><p><strong>Note</strong>: <code>String</code> paths internally get escaped and converted to an <code>RegExp</code> object.</p>
 <pre class="hljs"><code><span class="hljs-comment">// use a string to listen to the "path1.path2" path</span>
-monitor.on(<span class="hljs-string">"path1.path2"</span>, handler1);
+monitor.on(<span class="hljs-string">"path1.path2"</span>, handler2);
 
 <span class="hljs-comment">// listen to th paths "path1.*" except "path1.path4"</span>
 monitor.on(<span class="hljs-regexp">/^path1(?!.path4).*/</span>, handler3);</code></pre><p><strong>monitor.off</strong> &mdash; Removes the object path listener.</p>
