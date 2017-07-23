@@ -377,6 +377,7 @@ See how to contribute [here](https://github.com/cgabriel5/monitorjs/blob/master/
 - [ ] Clean/re-work code for better performance.
 - [ ] Implement monitor listener namespaces.
 - [ ] Expand cache clearing functionality (i.e. clear only specific path caches).
+- [ ] Add a way to filter the change types ([`add`, `delete`, `update`, `trigger`]) to act on.
 
 <a name="license"></a>
 ### License
