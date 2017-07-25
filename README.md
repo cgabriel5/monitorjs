@@ -4,7 +4,7 @@ Small library that monitors an object.
 
 ##### Table of Contents
 
-[How To Run Project](#run-project)  
+[Project Setup](#project-setup)  
 [What It Does](#what-it-does)  
 [Add To Project](#add-to-project)  
 [Access Library](#access-library)  
@@ -24,10 +24,10 @@ Small library that monitors an object.
 [TODO](#todo)  
 [License](#license)  
 
-<a name="run-project"></a>
-### How To Run Project
+<a name="project-setup"></a>
+### Project Setup
 
-Project uses [this](https://github.com/cgabriel5/snippets/tree/master/boilerplate/application) boilerplate. Gulp commands can be found [here](https://github.com/cgabriel5/snippets/blob/master/boilerplate/application/README.md#-using-gulp).
+Project uses [this](https://github.com/cgabriel5/snippets/tree/master/boilerplate/application) boilerplate. Its `README.md` for Yarn and Gulp usage/setup can be found [here](https://github.com/cgabriel5/snippets/blob/master/boilerplate/application/README.md#-read-before-use).
 
 <a name="what-it-does"></a>
 ### What It Does
