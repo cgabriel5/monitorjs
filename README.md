@@ -4,7 +4,7 @@ Small library that monitors an object.
 
 ##### Table of Contents
 
-[How to Run Project](#run-project)  
+[How To Run Project](#run-project)  
 [What It Does](#what-it-does)  
 [Add To Project](#add-to-project)  
 [Access Library](#access-library)  
@@ -25,9 +25,9 @@ Small library that monitors an object.
 [License](#license)  
 
 <a name="run-project"></a>
-### How to Run Project
+### How To Run Project
 
-This project uses the following [boilerplate](https://github.com/cgabriel5/snippets/tree/master/boilerplate/application). The Gulp commands can be found [here](https://github.com/cgabriel5/snippets/blob/master/boilerplate/application/README.md#-using-gulp).
+Project uses [this](https://github.com/cgabriel5/snippets/tree/master/boilerplate/application) boilerplate. Gulp commands can be found [here](https://github.com/cgabriel5/snippets/blob/master/boilerplate/application/README.md#-using-gulp).
 
 <a name="what-it-does"></a>
 ### What It Does
