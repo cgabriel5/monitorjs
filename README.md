@@ -27,7 +27,7 @@ Small library that monitors an object.
 <a name="project-setup"></a>
 ### Project Setup
 
-Project uses [this](https://github.com/cgabriel5/snippets/tree/master/boilerplate/application) boilerplate. Its `README.md` for Yarn and Gulp usage/setup can be found [here](https://github.com/cgabriel5/snippets/blob/master/boilerplate/application/README.md#-read-before-use).
+Project uses [this](https://github.com/cgabriel5/snippets/tree/master/boilerplate/application) boilerplate. Its [README.md](https://github.com/cgabriel5/snippets/blob/master/boilerplate/application/README.md#-read-before-use) contains instructions for `Yarn` and `Gulp`.
 
 <a name="what-it-does"></a>
 ### What It Does
