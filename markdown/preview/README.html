@@ -19,13 +19,16 @@
 <li><a href="#what-it-does">What It Does</a></li>
 <li><a href="#add-to-project">Add To Project</a></li>
 <li><a href="#access-library">Access Library</a></li>
-<li><a href="#api">API</a></li>
+<li><a href="#api">API</a><ul class="list">
 <li><a href="#instance-api">Instance</a><ul class="list">
 <li><a href="#signature-api">Signature</a></li>
 <li><a href="#instance-creation">Instance Creation</a></li>
 <li><a href="#instance-controller">Controller</a></li>
+<li><a href="#path-listener">Path Listener(s)</a></li>
 <li><a href="#instance-quicktable-methods-reference">QuickTable Methods</a></li>
 <li><a href="#instance-methods-long">Methods</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#usage">Usage</a><ul class="list">
@@ -43,10 +46,12 @@
 <p><a name="what-it-does"></a></p>
 <h3 id="what-it-does">What It Does</h3>
 <ul class="list">
-<li>Monitors an object for any changes (adding / updating / triggering / deleting properties).</li>
+<li>Monitors an object for changes. (additions, updates, triggers, deletions)</li>
+<li>Said changes can then be acted upon via path listeners, a <code>controller</code>, or both.</li>
 </ul>
 <p><a name="add-to-project"></a></p>
 <h3 id="add-to-project">Add To Project</h3>
+<p><strong>Note</strong>: The library, both minimized and unminimized, is located in <code>lib/</code>.</p>
 <pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/lib.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><p><a name="access-library"></a></p>
 <h3 id="access-library">Access Library</h3>
 <pre class="hljs"><code><span class="hljs-keyword">var</span> Monitor = <span class="hljs-built_in">window</span>.app.libs.Monitor;</code></pre><p><a name="api"></a></p>
@@ -56,14 +61,15 @@
 <h3 id="instance-signature">Instance Signature</h3>
 <pre class="hljs"><code><span class="hljs-comment">/**
  * @param  {String: Optional} controller [Main function to handle all object changes.]
- * @return {Object: Required} obj        [The object to monitor for changes.]
+ * @param  {Object: Required} obj        [The object to monitor for changes.]
+ * @return {Object}                      [The new Monitor instance.]
  */</span></code></pre><p><a name="instance-creation"></a></p>
 <h3 id="instance-creation">Instance Creation</h3>
 <p><strong>Note</strong>: Using the <code>new</code> keyword is not necessary. The library will make sure to use it for when when you don&#39;t. </p>
 <pre class="hljs"><code><span class="hljs-comment">// this...</span>
 <span class="hljs-keyword">var</span> monitor = <span class="hljs-keyword">new</span> Monitor(controller, obj);
 <span class="hljs-comment">// is the same as this</span>
-<span class="hljs-keyword">var</span> monitor = Monitor(controller, obj);</code></pre><p><strong>Note</strong>: A controller is not necessary. Using listeners via the <code>instance.on</code> method is perfectly fine.</p>
+<span class="hljs-keyword">var</span> monitor = Monitor(controller, obj);</code></pre><p><strong>Note</strong>: A controller is not necessary. Using path listeners via the <code>instance.on</code> method is perfectly fine.</p>
 <pre class="hljs"><code><span class="hljs-comment">// this...</span>
 <span class="hljs-keyword">var</span> monitor = <span class="hljs-keyword">new</span> Monitor(<span class="hljs-literal">null</span>, obj);
 <span class="hljs-comment">// is the same as this</span>
@@ -107,6 +113,9 @@
 </tr>
 </tbody>
 </table>
+<p><a name="path-listener"></a></p>
+<h3 id="path-listener(s)">Path Listener(s)</h3>
+<p>Listening to a specific path can be done via the <code>instance.on</code> method. Once the path listener is attached any changes the path undergoes can be acted upon within your handler (<code>callback</code>). To understand more look at the <code>instance.on</code> method.</p>
 <p><a name="instance-quicktable-methods-reference"></a></p>
 <h3 id="instance-quicktable-methods-reference">Instance QuickTable Methods Reference</h3>
 <table>
@@ -154,7 +163,7 @@
 <pre class="hljs"><code><span class="hljs-comment">// set the "path1.path2" to 12</span>
 monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>);</code></pre><p><strong>Note</strong>: A <code>conditions</code> object should be used when trying to modify the object via the <code>set</code> and <code>trigger</code> methods from within the <code>controller</code> or attached path listeners using the <code>on</code> method. The conditions object serves to hold flags which, depending on your codes logic, allow for certain object modifications to run. For example, when you pass in a certain flag inside the <code>conditions</code> object you can have the code return.</p>
 <pre class="hljs"><code><span class="hljs-comment">// set the "path1.path2" to 12 + add a conditions object</span>
-monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>, {<span class="hljs-string">"someCondition"</span>: <span class="hljs-literal">true</span>});</code></pre><p><strong>Note</strong>: Paths that lead to <code>arrays</code> can also be modified.</p>
+monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>, {<span class="hljs-string">"someCondition"</span>: <span class="hljs-literal">true</span>});</code></pre><p><strong>Note</strong>: Paths that lead to <code>Arrays</code> can also be modified.</p>
 <pre class="hljs"><code><span class="hljs-comment">// example monitor object + structure</span>
 <span class="hljs-keyword">var</span> settings = <span class="hljs-keyword">new</span> Monitor(<span class="hljs-literal">null</span>, {
     <span class="hljs-string">"appearance"</span>: {
@@ -240,7 +249,7 @@ monitor.on(<span class="hljs-regexp">/^path1(?!.path4).*/</span>, handler3);</co
 monitor.off(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path</span>) </span>{
     <span class="hljs-comment">// logic...</span>
 });</code></pre><p><strong>monitor.clearCache</strong> &mdash; Clears the <em>entire</em> monitor&#39;s cache.</p>
-<p><strong>Note</strong>: An internal cache is used to store and retrieve the previous path values. Sometimes it might be needed to clear it out.</p>
+<p><strong>Note</strong>: An internal cache is used to store and retrieve the previous path values. Sometimes, however, it might be useful or even necessary to programmatically clear it.</p>
 <pre class="hljs"><code>monitor.clearCache();</code></pre><p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
 <p><strong>Note</strong>: For a better understanding and to see the following examples in action, check out <code>index.html</code> and <code>js/source/test.js</code>. <code>js/source/test.js</code> contains the following examples.</p>
@@ -369,6 +378,7 @@ setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span
 <li>[ ] Expand cache clearing functionality (i.e. clear only specific path caches).</li>
 <li>[ ] Add a way to filter the change types ([<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>]) to act on.</li>
 <li>[ ] Add <code>observe</code>, <code>pause</code>, and <code>disconnect</code> instance methods for better functionality and usability.</li>
+<li>[ ] Add a way to run multiple sets, unsets, and triggers via their respective <code>set</code>, <code>unset</code>, and <code>trigger</code> method. (i.e. use an <code>Object</code> or an <code>Array</code> to account for order)</li>
 </ul>
 <p><a name="license"></a></p>
 <h3 id="license">License</h3>

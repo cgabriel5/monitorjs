@@ -9,12 +9,13 @@ Small library that monitors an object.
 - [Add To Project](#add-to-project)
 - [Access Library](#access-library)
 - [API](#api)
-- [Instance](#instance-api)
-    - [Signature](#signature-api)
-    - [Instance Creation](#instance-creation)
-    - [Controller](#instance-controller)
-    - [QuickTable Methods](#instance-quicktable-methods-reference)
-    - [Methods](#instance-methods-long)
+    - [Instance](#instance-api)
+        - [Signature](#signature-api)
+        - [Instance Creation](#instance-creation)
+        - [Controller](#instance-controller)
+        - [Path Listener(s)](#path-listener)
+        - [QuickTable Methods](#instance-quicktable-methods-reference)
+        - [Methods](#instance-methods-long)
 - [Usage](#usage)
     - [Example 1](#usage-example-1)
     - [Example 2](#usage-example-2)
@@ -30,10 +31,13 @@ Project uses [this](https://github.com/cgabriel5/snippets/tree/master/boilerplat
 <a name="what-it-does"></a>
 ### What It Does
 
-* Monitors an object for any changes (adding / updating / triggering / deleting properties).
+- Monitors an object for changes. (additions, updates, triggers, deletions)
+- Said changes can then be acted upon via path listeners, a `controller`, or both.
 
 <a name="add-to-project"></a>
 ### Add To Project
+
+**Note**: The library, both minimized and unminimized, is located in `lib/`.
 
 ```html
 <script src="path/to/lib.js"></script>
@@ -57,7 +61,8 @@ var Monitor = window.app.libs.Monitor;
 ```js
 /**
  * @param  {String: Optional} controller [Main function to handle all object changes.]
- * @return {Object: Required} obj        [The object to monitor for changes.]
+ * @param  {Object: Required} obj        [The object to monitor for changes.]
+ * @return {Object}                      [The new Monitor instance.]
  */
 ```
 
@@ -72,7 +77,7 @@ var monitor = new Monitor(controller, obj);
 // is the same as this
 var monitor = Monitor(controller, obj);
 ```
-**Note**: A controller is not necessary. Using listeners via the `instance.on` method is perfectly fine.
+**Note**: A controller is not necessary. Using path listeners via the `instance.on` method is perfectly fine.
 
 ```js
 // this...
@@ -101,6 +106,11 @@ Parameter | Description
 `oldValue` | The changes old value.
 `time` | A timestamp of when the change occurred.
 `conditions` | The conditions object.
+
+<a name="path-listener"></a>
+### Path Listener(s)
+
+Listening to a specific path can be done via the `instance.on` method. Once the path listener is attached any changes the path undergoes can be acted upon within your handler (`callback`). To understand more look at the `instance.on` method.
 
 <a name="instance-quicktable-methods-reference"></a>
 ### Instance QuickTable Methods Reference
@@ -139,7 +149,7 @@ monitor.set("path1.path2", 12);
 monitor.set("path1.path2", 12, {"someCondition": true});
 ```
 
-**Note**: Paths that lead to `arrays` can also be modified.
+**Note**: Paths that lead to `Arrays` can also be modified.
 
 ```js
 // example monitor object + structure
@@ -228,7 +238,7 @@ monitor.off("path1.path2", function(path) {
 
 **monitor.clearCache** &mdash; Clears the *entire* monitor's cache.
 
-**Note**: An internal cache is used to store and retrieve the previous path values. Sometimes it might be needed to clear it out.
+**Note**: An internal cache is used to store and retrieve the previous path values. Sometimes, however, it might be useful or even necessary to programmatically clear it.
 
 ```js
 monitor.clearCache();
@@ -377,6 +387,7 @@ See how to contribute [here](https://github.com/cgabriel5/monitorjs/blob/master/
 - [ ] Expand cache clearing functionality (i.e. clear only specific path caches).
 - [ ] Add a way to filter the change types ([`add`, `delete`, `update`, `trigger`]) to act on.
 - [ ] Add `observe`, `pause`, and `disconnect` instance methods for better functionality and usability.
+- [ ] Add a way to run multiple sets, unsets, and triggers via their respective `set`, `unset`, and `trigger` method. (i.e. use an `Object` or an `Array` to account for order)
 
 <a name="license"></a>
 ### License
