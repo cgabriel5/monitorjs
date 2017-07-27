@@ -4,25 +4,23 @@ Small library that monitors an object.
 
 ##### Table of Contents
 
-[Project Setup](#project-setup)  
-[What It Does](#what-it-does)  
-[Add To Project](#add-to-project)  
-[Access Library](#access-library)  
-[API](#api)  
-* [Instance](#instance-api)
-    * [Signature](#signature-api) 
-    * [Instance Creation](#instance-creation)  
-    * [Controller](#instance-controller)  
-    * [QuickTable Methods](#instance-quicktable-methods-reference)  
-    * [Methods](#instance-methods-long) 
-
-[Usage](#usage)  
-* [Example 1](#usage-example-1)
-* [Example 2](#usage-example-2)
-
-[Contributing](#contributing)  
-[TODO](#todo)  
-[License](#license)  
+- [Project Setup](#project-setup)
+- [What It Does](#what-it-does)
+- [Add To Project](#add-to-project)
+- [Access Library](#access-library)
+- [API](#api)
+- [Instance](#instance-api)
+    - [Signature](#signature-api)
+    - [Instance Creation](#instance-creation)
+    - [Controller](#instance-controller)
+    - [QuickTable Methods](#instance-quicktable-methods-reference)
+    - [Methods](#instance-methods-long)
+- [Usage](#usage)
+    - [Example 1](#usage-example-1)
+    - [Example 2](#usage-example-2)
+- [Contributing](#contributing)
+- [TODO](#todo)
+- [License](#license)
 
 <a name="project-setup"></a>
 ### Project Setup
