@@ -60,9 +60,9 @@ var Monitor = window.app.libs.Monitor;
 
 ```js
 /**
- * @param  {String: Optional} controller [Main function to handle all object changes.]
- * @param  {Object: Required} obj        [The object to monitor for changes.]
- * @return {Object}                      [The new Monitor instance.]
+ * @param  {Function: Optional} controller [Main function to handle all object changes.]
+ * @param  {Object: Required}   obj        [The object to monitor for changes.]
+ * @return {Object}                        [The new Monitor instance.]
  */
 ```
 
@@ -384,7 +384,7 @@ See how to contribute [here](https://github.com/cgabriel5/monitorjs/blob/master/
 
 - [ ] Clean/re-work code for better performance.
 - [ ] Implement listener namespaces for `instance.on` method.
-- [ ] Expand cache clearing functionality (i.e. clear only specific path caches).
+- [ ] Expand cache clearing functionality. (i.e. clear only specific path caches)
 - [ ] Add a way to filter the change types ([`add`, `delete`, `update`, `trigger`]) to act on.
 - [ ] Add `observe`, `pause`, and `disconnect` instance methods for better functionality and usability.
 - [ ] Add a way to run multiple sets, unsets, and triggers via their respective `set`, `unset`, and `trigger` method. (i.e. use an `Object` or an `Array` to account for order)

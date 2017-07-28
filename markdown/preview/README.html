@@ -60,9 +60,9 @@
 <p><a name="signature-api"></a></p>
 <h3 id="instance-signature">Instance Signature</h3>
 <pre class="hljs"><code><span class="hljs-comment">/**
- * @param  {String: Optional} controller [Main function to handle all object changes.]
- * @param  {Object: Required} obj        [The object to monitor for changes.]
- * @return {Object}                      [The new Monitor instance.]
+ * @param  {Function: Optional} controller [Main function to handle all object changes.]
+ * @param  {Object: Required}   obj        [The object to monitor for changes.]
+ * @return {Object}                        [The new Monitor instance.]
  */</span></code></pre><p><a name="instance-creation"></a></p>
 <h3 id="instance-creation">Instance Creation</h3>
 <p><strong>Note</strong>: Using the <code>new</code> keyword is not necessary. The library will make sure to use it for when when you don&#39;t. </p>
@@ -375,7 +375,7 @@ setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span
 <ul class="list">
 <li>[ ] Clean/re-work code for better performance.</li>
 <li>[ ] Implement listener namespaces for <code>instance.on</code> method.</li>
-<li>[ ] Expand cache clearing functionality (i.e. clear only specific path caches).</li>
+<li>[ ] Expand cache clearing functionality. (i.e. clear only specific path caches)</li>
 <li>[ ] Add a way to filter the change types ([<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>]) to act on.</li>
 <li>[ ] Add <code>observe</code>, <code>pause</code>, and <code>disconnect</code> instance methods for better functionality and usability.</li>
 <li>[ ] Add a way to run multiple sets, unsets, and triggers via their respective <code>set</code>, <code>unset</code>, and <code>trigger</code> method. (i.e. use an <code>Object</code> or an <code>Array</code> to account for order)</li>
