@@ -18,14 +18,12 @@
 <li><a href="#project-setup">Project Setup</a></li>
 <li><a href="#what-it-does">What It Does</a></li>
 <li><a href="#add-to-project">Add To Project</a></li>
-<li><a href="#access-library">Access Library</a></li>
 <li><a href="#api">API</a><ul class="list">
 <li><a href="#instance-api">Instance</a><ul class="list">
-<li><a href="#signature-api">Signature</a></li>
-<li><a href="#instance-creation">Instance Creation</a></li>
+<li><a href="#instance-methods-toc">TOC</a></li>
+<li><a href="#instance-creation">Creation</a></li>
 <li><a href="#instance-controller">Controller</a></li>
 <li><a href="#path-listener">Path Listener(s)</a></li>
-<li><a href="#instance-quicktable-methods-reference">QuickTable Methods</a></li>
 <li><a href="#instance-methods-long">Methods</a></li>
 </ul>
 </li>
@@ -52,19 +50,49 @@
 <p><a name="add-to-project"></a></p>
 <h3 id="add-to-project">Add To Project</h3>
 <p><strong>Note</strong>: The library, both minimized and unminimized, is located in <code>lib/</code>.</p>
-<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/lib.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><p><a name="access-library"></a></p>
-<h3 id="access-library">Access Library</h3>
-<pre class="hljs"><code><span class="hljs-keyword">var</span> Monitor = <span class="hljs-built_in">window</span>.app.libs.Monitor;</code></pre><p><a name="api"></a></p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/lib.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<span class="hljs-built_in">document</span>.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+<span class="hljs-meta">    "use strict"</span>;
+    <span class="hljs-comment">// once all resources have loaded</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">document</span>.readyState == <span class="hljs-string">"complete"</span>) {
+        <span class="hljs-comment">// get the library</span>
+        <span class="hljs-keyword">var</span> Monitor = <span class="hljs-built_in">window</span>.app.libs.Monitor;
+        <span class="hljs-comment">// logic...</span>
+    }
+});
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><p><a name="api"></a></p>
 <h2 id="api">API</h2>
 <p><a name="instance-api"></a></p>
-<p><a name="signature-api"></a></p>
-<h3 id="instance-signature">Instance Signature</h3>
-<pre class="hljs"><code><span class="hljs-comment">/**
- * @param  {Function: Optional} controller [Main function to handle all object changes.]
- * @param  {Object: Required}   obj        [The object to monitor for changes.]
- * @return {Object}                        [The new Monitor instance.]
- */</span></code></pre><p><a name="instance-creation"></a></p>
+<h3 id="api-&mdash;-instance">API &mdash; Instance</h3>
+<p><a name="instance-methods-toc"></a></p>
+<ul class="list">
+<li><a href="#instance-creation">Instance</a><ul class="list">
+<li><a href="#instance-controller">controller</a></li>
+<li><a href="#path-listener">path listeners</a></li>
+<li><a href="#instance-methods-get">instance.get( path )</a></li>
+<li><a href="#instance-methods-set">instance.set( path , value )</a></li>
+<li><a href="#instance-methods-unset">instance.unset( path , value )</a></li>
+<li><a href="#instance-methods-trigger">instance.trigger( path , value , conditions )</a></li>
+<li><a href="#instance-methods-on">instance.on( path , handler )</a></li>
+<li><a href="#instance-methods-off">instance.off( path )</a></li>
+<li><a href="#instance-methods-clearcache">instance.clearCache()</a></li>
+</ul>
+</li>
+</ul>
+<p><a name="instance-creation"></a></p>
 <h3 id="instance-creation">Instance Creation</h3>
+<ul class="list">
+<li><code>controller</code> (<code>Function</code>, <em>Optional</em>)<ul class="list">
+<li>Main function to handle all object changes.</li>
+</ul>
+</li>
+<li><code>obj</code>        (<code>Function</code>, <em>Required</em>)<ul class="list">
+<li>The object to monitor for changes.</li>
+</ul>
+</li>
+<li><strong>Returns</strong> instance.</li>
+</ul>
 <p><strong>Note</strong>: Using the <code>new</code> keyword is not necessary. The library will make sure to use it for when when you don&#39;t. </p>
 <pre class="hljs"><code><span class="hljs-comment">// this...</span>
 <span class="hljs-keyword">var</span> monitor = <span class="hljs-keyword">new</span> Monitor(controller, obj);
@@ -76,90 +104,37 @@
 <span class="hljs-keyword">var</span> monitor = Monitor(<span class="hljs-literal">null</span>, obj);</code></pre><p><a name="instance-controller"></a></p>
 <h3 id="controller">Controller</h3>
 <p>A <code>controller</code> is the brain of the monitor and is simply a handler. It is <em>optional</em> but when it&#39;s provided all changes performed to the monitor can be acted upon. When a <code>controller</code> is not used changes can be listened to by attaching path listeners via the <code>instance.on</code> method. Both <code>controllers</code> and path listeners can be used if so desired.</p>
+<h5 id="parameters">Parameters</h5>
+<ul class="list">
+<li><code>path</code>: The path the change occurred on.</li>
+<li><code>type</code>: The type of change (<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>).</li>
+<li><code>newValue</code>: The changes new value.</li>
+<li><code>oldValue</code>: The changes old value.</li>
+<li><code>time</code>: A timestamp of when the change occurred.</li>
+<li><code>conditions</code>: The conditions object.</li>
+</ul>
 <pre class="hljs"><code><span class="hljs-comment">// controller function to handle object changes</span>
 <span class="hljs-keyword">var</span> controller = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path, type, newValue, oldValue, time, conditions</span>) </span>{
     <span class="hljs-comment">// logic...</span>
-};</code></pre><table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>path</code></td>
-<td>The path the change occurred on.</td>
-</tr>
-<tr>
-<td><code>type</code></td>
-<td>The type of change (<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>).</td>
-</tr>
-<tr>
-<td><code>newValue</code></td>
-<td>The changes new value.</td>
-</tr>
-<tr>
-<td><code>oldValue</code></td>
-<td>The changes old value.</td>
-</tr>
-<tr>
-<td><code>time</code></td>
-<td>A timestamp of when the change occurred.</td>
-</tr>
-<tr>
-<td><code>conditions</code></td>
-<td>The conditions object.</td>
-</tr>
-</tbody>
-</table>
-<p><a name="path-listener"></a></p>
+};</code></pre><p><a name="path-listener"></a></p>
 <h3 id="path-listener(s)">Path Listener(s)</h3>
 <p>Listening to a specific path can be done via the <code>instance.on</code> method. Once the path listener is attached any changes the path undergoes can be acted upon within your handler (<code>callback</code>). To understand more look at the <code>instance.on</code> method.</p>
-<p><a name="instance-quicktable-methods-reference"></a></p>
-<h3 id="instance-quicktable-methods-reference">Instance QuickTable Methods Reference</h3>
-<table>
-<thead>
-<tr>
-<th>Method</th>
-<th>Function</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>get</code></td>
-<td>Gets the value at the provided object path.</td>
-</tr>
-<tr>
-<td><code>set</code></td>
-<td>Sets the provided value at the provided path.</td>
-</tr>
-<tr>
-<td><code>unset</code></td>
-<td>Removes the last property of the provided path.</td>
-</tr>
-<tr>
-<td><code>trigger</code></td>
-<td>Triggers the provided path.</td>
-</tr>
-<tr>
-<td><code>on</code></td>
-<td>Adds a object path listener.</td>
-</tr>
-<tr>
-<td><code>off</code></td>
-<td>Removes the object path listener.</td>
-</tr>
-<tr>
-<td><code>clearCache</code></td>
-<td>Clears the entire monitor&#39;s cache.</td>
-</tr>
-</tbody>
-</table>
 <p><a name="instance-methods-long"></a></p>
 <h3 id="instance-methods">Instance Methods</h3>
-<p><strong>monitor.get</strong> &mdash; Gets the value at the provided object path.</p>
-<pre class="hljs"><code>monitor.get(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><strong>monitor.set</strong> &mdash; Sets the provided value at the provided path.</p>
+<p><a name="instance-methods-get"></a>
+➜ <strong>instance.get(<code>path</code>)</strong> &mdash; Gets the value at the provided object path.</p>
+<ul class="list">
+<li><code>path</code> (<code>String</code>, <em>Required</em>)</li>
+<li><strong>Returns</strong> the path&#39;s value.</li>
+</ul>
+<pre class="hljs"><code>monitor.get(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><a name="instance-methods-set"></a>
+➜ <strong>instance.set(<code>path</code>, <code>value</code>)</strong> &mdash; Sets the provided value at the provided path.</p>
+<ul class="list">
+<li><code>path</code> (<code>String</code>, <em>Required</em>)</li>
+<li><code>value</code> (<code>Any</code>, <em>Required</em>)</li>
+<li><code>conditions</code> (<code>Object</code>, <em>Optional</em>)</li>
+<li><strong>Returns</strong> instance.</li>
+</ul>
 <pre class="hljs"><code><span class="hljs-comment">// set the "path1.path2" to 12</span>
 monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">12</span>);</code></pre><p><strong>Note</strong>: A <code>conditions</code> object should be used when trying to modify the object via the <code>set</code> and <code>trigger</code> methods from within the <code>controller</code> or attached path listeners using the <code>on</code> method. The conditions object serves to hold flags which, depending on your codes logic, allow for certain object modifications to run. For example, when you pass in a certain flag inside the <code>conditions</code> object you can have the code return.</p>
 <pre class="hljs"><code><span class="hljs-comment">// set the "path1.path2" to 12 + add a conditions object</span>
@@ -182,8 +157,20 @@ monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-nu
 <span class="hljs-comment">// add an "rgb" property array to the "appearance.colors" object</span>
 settings.set(<span class="hljs-string">"appearance.colors.rgb"</span>, [<span class="hljs-number">120</span>, <span class="hljs-number">0</span>, <span class="hljs-number">128</span>]);
 <span class="hljs-comment">// update the "appearance.colors.rgb" arrays first item</span>
-settings.set(<span class="hljs-string">"appearance.colors.rgb[0]"</span>, <span class="hljs-number">128</span>);</code></pre><p><strong>monitor.unset</strong> &mdash; Removes the last property of the provided path.</p>
-<pre class="hljs"><code>monitor.unset(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><strong>monitor.trigger</strong> &mdash; Triggers the provided path.</p>
+settings.set(<span class="hljs-string">"appearance.colors.rgb[0]"</span>, <span class="hljs-number">128</span>);</code></pre><p><a name="instance-methods-unset"></a>
+➜ <strong>instance.unset(<code>path</code>)</strong> &mdash; Removes the last property of the provided path.</p>
+<ul class="list">
+<li><code>path</code> (<code>String</code>, <em>Required</em>)</li>
+<li><strong>Returns</strong> instance.</li>
+</ul>
+<pre class="hljs"><code>monitor.unset(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><a name="instance-methods-trigger"></a>
+➜ <strong>instance.trigger(<code>path</code>, <code>value</code>, <code>conditions</code>)</strong> &mdash; Triggers the provided path.</p>
+<ul class="list">
+<li><code>path</code> (<code>String</code>, <em>Required</em>)</li>
+<li><code>value</code> (<code>Any</code>, <em>Optional</em>)</li>
+<li><code>conditions</code> (<code>Object</code>, <em>Optional</em>)</li>
+<li><strong>Returns</strong> instance.</li>
+</ul>
 <pre class="hljs"><code><span class="hljs-comment">// trigger the "path1.path2"</span>
 monitor.trigger(<span class="hljs-string">"path1.path2"</span>);
 
@@ -191,45 +178,23 @@ monitor.trigger(<span class="hljs-string">"path1.path2"</span>);
 monitor.trigger(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-number">14</span>);
 
 <span class="hljs-comment">// trigger the "path1.path2" + give an empty value + add a conditions object</span>
-monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-literal">undefined</span>, {<span class="hljs-string">"someCondition"</span>: <span class="hljs-literal">true</span>});</code></pre><p><strong>monitor.on</strong> &mdash; Adds an object path listener.</p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>filter</code></td>
-<td>The provided path&#39;s <code>RegExp.toString</code> string.</td>
-</tr>
-<tr>
-<td><code>path</code></td>
-<td>The path the change occurred on.</td>
-</tr>
-<tr>
-<td><code>type</code></td>
-<td>The type of change (<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>).</td>
-</tr>
-<tr>
-<td><code>newValue</code></td>
-<td>The changes new value.</td>
-</tr>
-<tr>
-<td><code>oldValue</code></td>
-<td>The changes old value.</td>
-</tr>
-<tr>
-<td><code>time</code></td>
-<td>A timestamp of when the change occurred.</td>
-</tr>
-<tr>
-<td><code>conditions</code></td>
-<td>The conditions object.</td>
-</tr>
-</tbody>
-</table>
+monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-literal">undefined</span>, {<span class="hljs-string">"someCondition"</span>: <span class="hljs-literal">true</span>});</code></pre><p><a name="instance-methods-on"></a>
+➜ <strong>instance.on(<code>path</code>, <code>handler</code>)</strong> &mdash; Adds an object path listener.</p>
+<ul class="list">
+<li><code>path</code> (<code>String|RegExp</code>, <em>Required</em>)</li>
+<li><code>handler</code> (<code>Function</code>, <em>Required</em>)</li>
+<li><strong>Returns</strong> instance.</li>
+</ul>
+<h5 id="parameters-1">Parameters</h5>
+<ul class="list">
+<li><code>filter</code>: The provided path&#39;s <code>RegExp.toString</code> string.</li>
+<li><code>path</code>: The path the change occurred on.</li>
+<li><code>type</code>: The type of change (<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>).</li>
+<li><code>newValue</code>: The changes new value.</li>
+<li><code>oldValue</code>: The changes old value.</li>
+<li><code>time</code>: A timestamp of when the change occurred.</li>
+<li><code>conditions</code>: The conditions object.</li>
+</ul>
 <pre class="hljs"><code><span class="hljs-comment">// example handler function</span>
 <span class="hljs-keyword">var</span> handler = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">filter, path, type, newValue, oldValue, time, conditions</span>) </span>{
     <span class="hljs-comment">// logic...</span>
@@ -241,14 +206,25 @@ monitor.on(<span class="hljs-regexp">/^path1.\.*/g</span>, handler);</code></pre
 monitor.on(<span class="hljs-string">"path1.path2"</span>, handler2);
 
 <span class="hljs-comment">// listen to th paths "path1.*" except "path1.path4"</span>
-monitor.on(<span class="hljs-regexp">/^path1(?!.path4).*/</span>, handler3);</code></pre><p><strong>monitor.off</strong> &mdash; Removes the object path listener.</p>
+monitor.on(<span class="hljs-regexp">/^path1(?!.path4).*/</span>, handler3);</code></pre><p><a name="instance-methods-off"></a>
+➜ <strong>instance.off(<code>path</code>)</strong> &mdash; Removes the object path listener.</p>
+<ul class="list">
+<li><code>path</code> (<code>String|RegExp</code>, <em>Required</em>)</li>
+<li><code>callback</code> (<code>Function</code>, <em>Optional</em>)</li>
+<li><strong>Returns</strong> instance.</li>
+</ul>
 <p><strong>Note</strong>: When removing a listener the provide path must be the same path that was provided with the <code>instance.on</code> method.</p>
 <pre class="hljs"><code>monitor.off(<span class="hljs-string">"path1.path2"</span>);
 
 <span class="hljs-comment">// callback can be provided</span>
 monitor.off(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path</span>) </span>{
     <span class="hljs-comment">// logic...</span>
-});</code></pre><p><strong>monitor.clearCache</strong> &mdash; Clears the <em>entire</em> monitor&#39;s cache.</p>
+});</code></pre><p><a name="instance-methods-clearcache"></a>
+➜ <strong>instance.clearCache</strong> &mdash; Clears the <em>entire</em> monitor&#39;s cache.</p>
+<ul class="list">
+<li><strong>No Parameters</strong></li>
+<li><strong>Returns</strong> Nothing.</li>
+</ul>
 <p><strong>Note</strong>: An internal cache is used to store and retrieve the previous path values. Sometimes, however, it might be useful or even necessary to programmatically clear it.</p>
 <pre class="hljs"><code>monitor.clearCache();</code></pre><p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
