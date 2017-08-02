@@ -64,8 +64,8 @@ document.onreadystatechange = function() {
     - [controller](#instance-controller)
     - [path listeners](#path-listener)
     - [instance.get( path )](#instance-methods-get)
-    - [instance.set( path , value )](#instance-methods-set)
-    - [instance.unset( path , value )](#instance-methods-unset)
+    - [instance.set( path , value , conditions )](#instance-methods-set)
+    - [instance.unset( path , value , conditions )](#instance-methods-unset)
     - [instance.trigger( path , value , conditions )](#instance-methods-trigger)
     - [instance.on( path , handler )](#instance-methods-on)
     - [instance.off( path )](#instance-methods-off)
@@ -136,7 +136,7 @@ monitor.get("path1.path2");
 ```
 
 <a name="instance-methods-set"></a>
-➜ **instance.set(`path`, `value`)** &mdash; Sets the provided value at the provided path.
+➜ **instance.set(`path`, `value`, `conditions`)** &mdash; Sets the provided value at the provided path.
 
 - `path` (`String`, _Required_)
 - `value` (`Any`, _Required_)
@@ -180,9 +180,10 @@ settings.set("appearance.colors.rgb[0]", 128);
 ```
 
 <a name="instance-methods-unset"></a>
-➜ **instance.unset(`path`)** &mdash; Removes the last property of the provided path.
+➜ **instance.unset(`path`, `conditions`)** &mdash; Removes the last property of the provided path.
 
 - `path` (`String`, _Required_)
+- `conditions` (`Object`, _Optional_)
 - **Returns** instance.
 
 ```js

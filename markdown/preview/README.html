@@ -71,8 +71,8 @@
 <li><a href="#instance-controller">controller</a></li>
 <li><a href="#path-listener">path listeners</a></li>
 <li><a href="#instance-methods-get">instance.get( path )</a></li>
-<li><a href="#instance-methods-set">instance.set( path , value )</a></li>
-<li><a href="#instance-methods-unset">instance.unset( path , value )</a></li>
+<li><a href="#instance-methods-set">instance.set( path , value , conditions )</a></li>
+<li><a href="#instance-methods-unset">instance.unset( path , value , conditions )</a></li>
 <li><a href="#instance-methods-trigger">instance.trigger( path , value , conditions )</a></li>
 <li><a href="#instance-methods-on">instance.on( path , handler )</a></li>
 <li><a href="#instance-methods-off">instance.off( path )</a></li>
@@ -128,7 +128,7 @@
 <li><strong>Returns</strong> the path&#39;s value.</li>
 </ul>
 <pre class="hljs"><code>monitor.get(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><a name="instance-methods-set"></a>
-➜ <strong>instance.set(<code>path</code>, <code>value</code>)</strong> &mdash; Sets the provided value at the provided path.</p>
+➜ <strong>instance.set(<code>path</code>, <code>value</code>, <code>conditions</code>)</strong> &mdash; Sets the provided value at the provided path.</p>
 <ul class="list">
 <li><code>path</code> (<code>String</code>, <em>Required</em>)</li>
 <li><code>value</code> (<code>Any</code>, <em>Required</em>)</li>
@@ -158,9 +158,10 @@ monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-nu
 settings.set(<span class="hljs-string">"appearance.colors.rgb"</span>, [<span class="hljs-number">120</span>, <span class="hljs-number">0</span>, <span class="hljs-number">128</span>]);
 <span class="hljs-comment">// update the "appearance.colors.rgb" arrays first item</span>
 settings.set(<span class="hljs-string">"appearance.colors.rgb[0]"</span>, <span class="hljs-number">128</span>);</code></pre><p><a name="instance-methods-unset"></a>
-➜ <strong>instance.unset(<code>path</code>)</strong> &mdash; Removes the last property of the provided path.</p>
+➜ <strong>instance.unset(<code>path</code>, <code>conditions</code>)</strong> &mdash; Removes the last property of the provided path.</p>
 <ul class="list">
 <li><code>path</code> (<code>String</code>, <em>Required</em>)</li>
+<li><code>conditions</code> (<code>Object</code>, <em>Optional</em>)</li>
 <li><strong>Returns</strong> instance.</li>
 </ul>
 <pre class="hljs"><code>monitor.unset(<span class="hljs-string">"path1.path2"</span>);</code></pre><p><a name="instance-methods-trigger"></a>
