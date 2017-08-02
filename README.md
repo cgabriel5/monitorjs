@@ -76,6 +76,13 @@ document.onreadystatechange = function() {
 
 - `controller` (`Function`, _Optional_)
     - Main function to handle all object changes.
+    - Parameters:
+        - `path`: The path the change occurred on.
+        - `type`: The type of change (`add`, `delete`, `update`, `trigger`).
+        - `newValue`: The changes new value.
+        - `oldValue`: The changes old value.
+        - `time`: A timestamp of when the change occurred.
+        - `conditions`: The conditions object.
 - `obj`        (`Function`, _Required_)
     - The object to monitor for changes.
 - **Returns** instance.
@@ -102,14 +109,6 @@ var monitor = Monitor(null, obj);
 ### Controller
 
 A `controller` is the brain of the monitor and is simply a handler. It is *optional* but when it's provided all changes performed to the monitor can be acted upon. When a `controller` is not used changes can be listened to by attaching path listeners via the `instance.on` method. Both `controllers` and path listeners can be used if so desired.
-
-##### Parameters
-- `path`: The path the change occurred on.
-- `type`: The type of change (`add`, `delete`, `update`, `trigger`).
-- `newValue`: The changes new value.
-- `oldValue`: The changes old value.
-- `time`: A timestamp of when the change occurred.
-- `conditions`: The conditions object.
 
 ```js
 // controller function to handle object changes
@@ -214,16 +213,15 @@ monitor.set("path1.path2", undefined, {"someCondition": true});
 
 - `path` (`String|RegExp`, _Required_)
 - `handler` (`Function`, _Required_)
+    - Parameters:
+        - `filter`: The provided path's `RegExp.toString` string.
+        - `path`: The path the change occurred on.
+        - `type`: The type of change (`add`, `delete`, `update`, `trigger`).
+        - `newValue`: The changes new value.
+        - `oldValue`: The changes old value.
+        - `time`: A timestamp of when the change occurred.
+        - `conditions`: The conditions object.
 - **Returns** instance.
-
-##### Parameters
-- `filter`: The provided path's `RegExp.toString` string.
-- `path`: The path the change occurred on.
-- `type`: The type of change (`add`, `delete`, `update`, `trigger`).
-- `newValue`: The changes new value.
-- `oldValue`: The changes old value.
-- `time`: A timestamp of when the change occurred.
-- `conditions`: The conditions object.
 
 ```js
 // example handler function

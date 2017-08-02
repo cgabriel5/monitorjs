@@ -85,6 +85,15 @@
 <ul class="list">
 <li><code>controller</code> (<code>Function</code>, <em>Optional</em>)<ul class="list">
 <li>Main function to handle all object changes.</li>
+<li>Parameters:<ul class="list">
+<li><code>path</code>: The path the change occurred on.</li>
+<li><code>type</code>: The type of change (<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>).</li>
+<li><code>newValue</code>: The changes new value.</li>
+<li><code>oldValue</code>: The changes old value.</li>
+<li><code>time</code>: A timestamp of when the change occurred.</li>
+<li><code>conditions</code>: The conditions object.</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><code>obj</code>        (<code>Function</code>, <em>Required</em>)<ul class="list">
@@ -104,15 +113,6 @@
 <span class="hljs-keyword">var</span> monitor = Monitor(<span class="hljs-literal">null</span>, obj);</code></pre><p><a name="instance-controller"></a></p>
 <h3 id="controller">Controller</h3>
 <p>A <code>controller</code> is the brain of the monitor and is simply a handler. It is <em>optional</em> but when it&#39;s provided all changes performed to the monitor can be acted upon. When a <code>controller</code> is not used changes can be listened to by attaching path listeners via the <code>instance.on</code> method. Both <code>controllers</code> and path listeners can be used if so desired.</p>
-<h5 id="parameters">Parameters</h5>
-<ul class="list">
-<li><code>path</code>: The path the change occurred on.</li>
-<li><code>type</code>: The type of change (<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>).</li>
-<li><code>newValue</code>: The changes new value.</li>
-<li><code>oldValue</code>: The changes old value.</li>
-<li><code>time</code>: A timestamp of when the change occurred.</li>
-<li><code>conditions</code>: The conditions object.</li>
-</ul>
 <pre class="hljs"><code><span class="hljs-comment">// controller function to handle object changes</span>
 <span class="hljs-keyword">var</span> controller = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">path, type, newValue, oldValue, time, conditions</span>) </span>{
     <span class="hljs-comment">// logic...</span>
@@ -182,11 +182,8 @@ monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-li
 ➜ <strong>instance.on(<code>path</code>, <code>handler</code>)</strong> &mdash; Adds an object path listener.</p>
 <ul class="list">
 <li><code>path</code> (<code>String|RegExp</code>, <em>Required</em>)</li>
-<li><code>handler</code> (<code>Function</code>, <em>Required</em>)</li>
-<li><strong>Returns</strong> instance.</li>
-</ul>
-<h5 id="parameters-1">Parameters</h5>
-<ul class="list">
+<li><code>handler</code> (<code>Function</code>, <em>Required</em>)<ul class="list">
+<li>Parameters:<ul class="list">
 <li><code>filter</code>: The provided path&#39;s <code>RegExp.toString</code> string.</li>
 <li><code>path</code>: The path the change occurred on.</li>
 <li><code>type</code>: The type of change (<code>add</code>, <code>delete</code>, <code>update</code>, <code>trigger</code>).</li>
@@ -194,6 +191,11 @@ monitor.set(<span class="hljs-string">"path1.path2"</span>, <span class="hljs-li
 <li><code>oldValue</code>: The changes old value.</li>
 <li><code>time</code>: A timestamp of when the change occurred.</li>
 <li><code>conditions</code>: The conditions object.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Returns</strong> instance.</li>
 </ul>
 <pre class="hljs"><code><span class="hljs-comment">// example handler function</span>
 <span class="hljs-keyword">var</span> handler = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">filter, path, type, newValue, oldValue, time, conditions</span>) </span>{
