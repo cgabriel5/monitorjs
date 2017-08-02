@@ -13,6 +13,7 @@ Small library that monitors an object.
         - [Creation](#instance-creation)
         - [Controller](#instance-controller)
         - [Path Listener(s)](#path-listener)
+        - [Conditions](#conditions-object)
         - [Methods](#instance-methods-long)
 - [Usage](#usage)
     - [Example 1](#usage-example-1)
@@ -63,12 +64,12 @@ document.onreadystatechange = function() {
 - [Instance](#instance-creation)
     - [controller](#instance-controller)
     - [path listeners](#path-listener)
-    - [instance.get( path )](#instance-methods-get)
-    - [instance.set( path , value , conditions )](#instance-methods-set)
-    - [instance.unset( path , value , conditions )](#instance-methods-unset)
-    - [instance.trigger( path , value , conditions )](#instance-methods-trigger)
-    - [instance.on( path , handler )](#instance-methods-on)
-    - [instance.off( path )](#instance-methods-off)
+    - [instance.get()](#instance-methods-get)
+    - [instance.set()](#instance-methods-set)
+    - [instance.unset()](#instance-methods-unset)
+    - [instance.trigger()](#instance-methods-trigger)
+    - [instance.on()](#instance-methods-on)
+    - [instance.off()](#instance-methods-off)
     - [instance.clearCache()](#instance-methods-clearcache)
 
 <a name="instance-creation"></a>
@@ -108,7 +109,9 @@ var monitor = Monitor(null, obj);
 <a name="instance-controller"></a>
 ### Controller
 
-A `controller` is the brain of the monitor and is simply a handler. It is *optional* but when it's provided all changes performed to the monitor can be acted upon. When a `controller` is not used changes can be listened to by attaching path listeners via the `instance.on` method. Both `controllers` and path listeners can be used if so desired.
+A `controller` is the brain of the monitor and is simply a handler that fires every time a change is made via the instance's `set`, `unset`, and/or `trigger` method. It is *optional* but when it's provided _all_ changes performed on the monitor can be acted upon from within it. When a `controller` is not used changes can be listened to by attaching path listeners via the `instance.on` method. Both `controllers` and path listeners can be used if so desired.
+
+**Note**: `controller` parameters can be found [here](#instance-creation).
 
 ```js
 // controller function to handle object changes
@@ -148,7 +151,8 @@ monitor.get("path1.path2");
 monitor.set("path1.path2", 12);
 ```
 
-**Note**: A `conditions` object should be used when trying to modify the object via the `set` and `trigger` methods from within the `controller` or attached path listeners using the `on` method. The conditions object serves to hold flags which, depending on your codes logic, allow for certain object modifications to run. For example, when you pass in a certain flag inside the `conditions` object you can have the code return.
+<a name="conditions-object"></a>
+**Note**: A `conditions` object should be used when trying to modify the object from within the `controller` or attached path listeners using the `on` method via the `set`, `trigger`, and `unset` methods. The conditions object serves to hold flags which, depending on your codes logic, allow for certain object modifications to run. For example, when you pass in a certain flag inside the `conditions` object you can have the code return and skip the change entirely. _This is mainly done to prevent circular/loop errors_.
 
 ```js
 // set the "path1.path2" to 12 + add a conditions object
@@ -245,10 +249,12 @@ monitor.on(/^path1(?!.path4).*/, handler3);
 ```
 
 <a name="instance-methods-off"></a>
-➜ **instance.off(`path`)** &mdash; Removes the object path listener.
+➜ **instance.off(`path`, `callback`)** &mdash; Removes the object path listener.
 
 - `path` (`String|RegExp`, _Required_)
 - `callback` (`Function`, _Optional_)
+    - Parameters:
+        - `path`: The path the change occurred on.
 - **Returns** instance.
 
 **Note**: When removing a listener the provide path must be the same path that was provided with the `instance.on` method.
