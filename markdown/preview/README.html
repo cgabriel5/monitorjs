@@ -19,15 +19,7 @@
 <li><a href="#what-it-does">What It Does</a></li>
 <li><a href="#add-to-project">Add To Project</a></li>
 <li><a href="#api">API</a><ul class="list">
-<li><a href="#instance-api">Instance</a><ul class="list">
-<li><a href="#instance-methods-toc">TOC</a></li>
-<li><a href="#instance-creation">Creation</a></li>
-<li><a href="#instance-controller">Controller</a></li>
-<li><a href="#path-listener">Path Listener(s)</a></li>
-<li><a href="#conditions-object">Conditions</a></li>
-<li><a href="#instance-methods-long">Methods</a></li>
-</ul>
-</li>
+<li><a href="#instance-api">Instance</a></li>
 </ul>
 </li>
 <li><a href="#usage">Usage</a><ul class="list">
@@ -69,15 +61,16 @@
 <p><a name="instance-methods-toc"></a></p>
 <ul class="list">
 <li><a href="#instance-creation">Instance</a><ul class="list">
-<li><a href="#instance-controller">controller</a></li>
-<li><a href="#path-listener">path listeners</a></li>
-<li><a href="#instance-methods-get">instance.get()</a></li>
-<li><a href="#instance-methods-set">instance.set()</a></li>
-<li><a href="#instance-methods-unset">instance.unset()</a></li>
-<li><a href="#instance-methods-trigger">instance.trigger()</a></li>
-<li><a href="#instance-methods-on">instance.on()</a></li>
-<li><a href="#instance-methods-off">instance.off()</a></li>
-<li><a href="#instance-methods-clearcache">instance.clearCache()</a></li>
+<li><a href="#instance-controller">Controller</a></li>
+<li><a href="#path-listener">Path Listeners</a></li>
+<li><a href="#conditions-object">Conditions</a></li>
+<li><a href="#instance-methods-get">➜ instance.get()</a></li>
+<li><a href="#instance-methods-set">➜ instance.set()</a></li>
+<li><a href="#instance-methods-unset">➜ instance.unset()</a></li>
+<li><a href="#instance-methods-trigger">➜ instance.trigger()</a></li>
+<li><a href="#instance-methods-on">➜ instance.on()</a></li>
+<li><a href="#instance-methods-off">➜ instance.off()</a></li>
+<li><a href="#instance-methods-clearcache">➜ instance.clearCache()</a></li>
 </ul>
 </li>
 </ul>
@@ -211,7 +204,7 @@ monitor.on(<span class="hljs-regexp">/^path1.\.*/g</span>, handler);</code></pre
 <pre class="hljs"><code><span class="hljs-comment">// use a string to listen to the "path1.path2" path</span>
 monitor.on(<span class="hljs-string">"path1.path2"</span>, handler2);
 
-<span class="hljs-comment">// listen to th paths "path1.*" except "path1.path4"</span>
+<span class="hljs-comment">// listen to the paths "path1.*" except "path1.path4"</span>
 monitor.on(<span class="hljs-regexp">/^path1(?!.path4).*/</span>, handler3);</code></pre><p><a name="instance-methods-off"></a>
 ➜ <strong>instance.off(<code>path</code>, <code>callback</code>)</strong> &mdash; Removes the object path listener.</p>
 <ul class="list">

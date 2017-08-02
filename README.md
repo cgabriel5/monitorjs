@@ -9,12 +9,6 @@ Small library that monitors an object.
 - [Add To Project](#add-to-project)
 - [API](#api)
     - [Instance](#instance-api)
-        - [TOC](#instance-methods-toc)
-        - [Creation](#instance-creation)
-        - [Controller](#instance-controller)
-        - [Path Listener(s)](#path-listener)
-        - [Conditions](#conditions-object)
-        - [Methods](#instance-methods-long)
 - [Usage](#usage)
     - [Example 1](#usage-example-1)
     - [Example 2](#usage-example-2)
@@ -62,15 +56,16 @@ document.onreadystatechange = function() {
 <a name="instance-methods-toc"></a>
 
 - [Instance](#instance-creation)
-    - [controller](#instance-controller)
-    - [path listeners](#path-listener)
-    - [instance.get()](#instance-methods-get)
-    - [instance.set()](#instance-methods-set)
-    - [instance.unset()](#instance-methods-unset)
-    - [instance.trigger()](#instance-methods-trigger)
-    - [instance.on()](#instance-methods-on)
-    - [instance.off()](#instance-methods-off)
-    - [instance.clearCache()](#instance-methods-clearcache)
+    - [Controller](#instance-controller)
+    - [Path Listeners](#path-listener)
+    - [Conditions](#conditions-object)
+    - [➜ instance.get()](#instance-methods-get)
+    - [➜ instance.set()](#instance-methods-set)
+    - [➜ instance.unset()](#instance-methods-unset)
+    - [➜ instance.trigger()](#instance-methods-trigger)
+    - [➜ instance.on()](#instance-methods-on)
+    - [➜ instance.off()](#instance-methods-off)
+    - [➜ instance.clearCache()](#instance-methods-clearcache)
 
 <a name="instance-creation"></a>
 ### Instance Creation
@@ -244,7 +239,7 @@ monitor.on(/^path1.\.*/g, handler);
 // use a string to listen to the "path1.path2" path
 monitor.on("path1.path2", handler2);
 
-// listen to th paths "path1.*" except "path1.path4"
+// listen to the paths "path1.*" except "path1.path4"
 monitor.on(/^path1(?!.path4).*/, handler3);
 ```
 
