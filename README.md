@@ -10,8 +10,7 @@ Small library that monitors an object.
 - [API](#api)
     - [Instance](#instance-api)
 - [Usage](#usage)
-    - [Example 1](#usage-example-1)
-    - [Example 2](#usage-example-2)
+    - [Examples](#usage-examples)
 - [Contributing](#contributing)
 - [TODO](#todo)
 - [License](#license)
@@ -279,6 +278,14 @@ monitor.clearCache();
 ### Usage
 
 **Note**: For a better understanding and to see the following examples in action, check out `index.html` and `js/source/test.js`. `js/source/test.js` contains the following examples.
+
+<a name="usage-examples-toc"></a>
+- [Examples](#usage-examples)
+    - [Example 1](#usage-example-1)
+    - [Example 2](#usage-example-2)
+
+<a name="usage-examples"></a>
+### Examples
 
 <a name="usage-example-1"></a>
 **Example 1** &mdash; Monitor an object with controller logic.
